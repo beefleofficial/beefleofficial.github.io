@@ -1,0 +1,1448 @@
+<html lang="en">
+    <head>
+        <title>Dashboard | </title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link href="css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous"><link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+        <link href="https://fonts.googleapis.com/css2?family=PT+Sans+Narrow:wght@400;700&amp;family=PT+Sans:ital,wght@0,400;0,700;1,400;1,700&amp;display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script src="https://momentjs.com/downloads/moment.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
+        <style>
+            body{
+                color:#FFFFFF;
+                font-family: 'PT Sans', sans-serif;
+                font-weight:400;
+                font-size:16px;
+                background:rgba(34, 34, 34, 1);
+            }
+
+            body.hideScroll{
+                overflow-y:hidden;
+            }
+
+            .container{
+                max-width:1140px;
+                padding-left: 1em;
+                padding-right: 1em;
+            }
+            
+            .navbar {
+                height:auto;
+            }
+
+            @media (min-width: 992px) {
+                .navbar{
+                    height:80px;
+                }
+
+                .navbar .flex-item{
+                    width:33.33%;
+                }
+
+                .navbar .flex-item:nth-child(1){
+                    display:flex;
+                    align-items: center;
+                    -ms-flex-pack: start !important;
+                    justify-content: flex-start !important;
+                }
+
+                .navbar .flex-item:nth-child(2){
+                    display:flex;
+                    align-items: center;
+                    -ms-flex-pack: center !important;
+                    justify-content: center !important;
+                }
+
+                .navbar .flex-item:nth-child(3){
+                    display:flex;
+                    align-items: center;
+                    -ms-flex-pack: end !important;
+                    justify-content: flex-end !important;
+                }
+            }
+
+            .navbar-brand{
+                height:50px;
+                width:150px;
+                background:#FFFF00;
+                display:block;
+                margin-right:0;
+            }
+
+            .lotto-tier-buttons-wrapper{
+                border: 0;
+                padding: 9px;
+                box-shadow: inset 2px 2px 5px rgba(0,0,0,0.25), inset -2px -2px 5px rgba(255,255,255,0.125) !important;
+                border-radius: 1em;
+                overflow: hidden;
+                background: #222222;
+                display:inline-block;
+            }
+
+            .lotto-tier-buttons-wrapper .lotto-tier-button{
+                border: 0;
+                color: #FFFF00;
+                padding: 6px 12px;
+                font-weight: 700;
+                background: transparent;
+            }
+            
+            .lotto-tier-button.selected{
+                padding: 6px 12px;
+                background: #FFFF00;
+                font-weight: 700;
+                color: #222222;
+                border-radius: calc(1em - 6px);
+                pointer-events: none;
+            }
+
+            /* BUTTON */
+        
+            .btn {
+                display: inline-block;
+                font-weight: 400;
+                text-align: center;
+                vertical-align: middle;
+                -webkit-user-select: none;
+                -ms-user-select: none;
+                user-select: none;
+                padding: 0.5em 1em;
+                color:#222222 !important;
+                background:#FFFF00 !important;
+                font-size: 1.25em !important;
+                border: 0em solid #535400 !important;
+                box-shadow: 4px 4px 8px rgba(0, 0, 0,0.25), -4px -4px 8px rgba(255, 255, 255,0.25) !important;
+                font-family: 'PT Sans Narrow';
+                font-weight:700;
+                font-size: 1.25em;
+                line-height: 1.5;
+                border-radius: 1em;
+                position: relative;
+                transition: transform .2s ease;
+            }
+        
+            .btn-primary:focus:enabled,
+            .btn-primary:hover:enabled,
+            .btn-primary:active:enabled{
+                transform: translate(0,2px); 
+            }
+        
+            .btn-primary:disabled{
+                color: #FFFF00  !important;
+                background: #222222  !important;
+                border: 0em solid #535400  !important;
+                pointer-events: auto;
+                opacity: .65;
+                cursor: default;
+            }
+
+            section{
+                overflow-x:hidden;
+            }
+
+            .dashboard-info {
+                border: 0em solid #A7A800 !important;
+                position: relative !important;
+                box-shadow: inset 2px 2px 5px rgba(0,0,0,0.25), inset -2px -2px 5px rgba(255,255,255,0.125) !important;
+                border-radius: 1em !important;
+                background: transparent;
+                overflow: hidden;
+                height: 135px;
+            }
+
+            .dashboard-info .js-skeleton-content-wrapper{
+                position:relative;
+            }
+
+            .dashboard-info .js-skeleton-content-wrapper.show-skeleton .text-2, .dashboard-info .js-skeleton-content-wrapper.show-skeleton .text-3, .dashboard-info .js-skeleton-content-wrapper.show-skeleton .indicator{
+                opacity:0;
+            }
+
+            .dashboard-info .js-skeleton-content-wrapper .skeleton{
+                display:block;
+                width:100%;
+                height:100%;
+                animation: skeleton-loading-2 1s linear infinite alternate;
+                border-radius:0.25em;
+                position:absolute;
+                top:0;
+                left:0;
+                opacity:0;
+            }
+
+            .dashboard-info .js-skeleton-content-wrapper .skeleton-2{
+                display:block;
+                width:100%;
+                height:100%;
+                animation: skeleton-loading-3 1s linear infinite alternate;
+                border-radius:0.25em;
+                position:absolute;
+                top:0;
+                left:0;
+                opacity:0;
+            }
+
+            .dashboard-info .js-skeleton-content-wrapper.show-skeleton .skeleton, .dashboard-info .js-skeleton-content-wrapper.show-skeleton .skeleton-2{
+                opacity:1;
+            }
+
+            @keyframes skeleton-loading-2 {
+                0% {
+                    background-color: rgba(255, 255, 0, 0.66);
+                }
+                100% {
+                    background-color: rgba(255, 255, 0, 0.33);
+                }
+		    }
+
+            @keyframes skeleton-loading-3 {
+                0% {
+                    background-color: rgba(255, 255, 255, 0.66);
+                }
+                100% {
+                    background-color: rgba(255, 255, 255, 0.33);
+                }
+		    }
+
+            .dashboard-info .text-1 {
+                color: #FFF;
+                font-size: 1em;
+            }
+
+            .dashboard-info .text-2 {
+                color: #FFFF00;
+                font-size: 1.25em;
+                font-weight: 700;
+            }
+
+            .dashboard-info .text-3 {
+                color: #FFF;
+                font-size: 0.875em;
+                font-weight: 400;
+            }
+
+            .dashboard-info .indicator-wrapper{
+                border-radius:0.5em;
+                overflow:hidden;
+            }
+
+            .dashboard-info .indicator-wrapper .indicator{
+                background:#FFFF00;
+                padding:0.25em 0.5em;
+                font-size:1em;
+                font-weight:700;
+                color:#222222;
+                text-align:center;
+                display:block;
+            }
+           
+
+            .dashboard-info-2 {
+                border: 0em solid #A7A800 !important;
+                position: relative !important;
+                box-shadow: 4px 4px 8px rgba(0, 0, 0,0.25), -4px -4px 8px rgba(255, 255, 255,0.25) !important;
+                border-radius: 1em !important;
+                background: #FFFF00;
+                overflow: hidden;
+                height: 135px;
+            }
+
+            .dashboard-info-2 .js-skeleton-content-wrapper{
+                position:relative;
+            }
+
+            .dashboard-info-2 .js-skeleton-content-wrapper.show-skeleton .text-2, .dashboard-info-2 .js-skeleton-content-wrapper.show-skeleton .text-3, .dashboard-info-2 .js-skeleton-content-wrapper.show-skeleton .indicator{
+                opacity:0;
+            }
+
+            .dashboard-info-2 .js-skeleton-content-wrapper .skeleton{
+                display:block;
+                width:100%;
+                height:100%;
+                animation: skeleton-loading 1s linear infinite alternate;
+                border-radius:0.25em;
+                position:absolute;
+                top:0;
+                left:0;
+                opacity:0;
+            }
+
+            .dashboard-info-2 .js-skeleton-content-wrapper.show-skeleton .skeleton{
+                opacity:1;
+            }
+
+            @keyframes skeleton-loading {
+                0% {
+                    background-color: rgba(34, 34, 34, 0.66);
+                }
+                100% {
+                    background-color: rgba(34, 34, 34, 0.33);
+                }
+		    }
+
+            .dashboard-info-2 .text-1 {
+                color: #222222;
+                font-size: 1em;
+                font-weight:400;
+            }
+
+            .dashboard-info-2 .text-2 {
+                color: #222222;
+                font-size: 1.25em;
+                font-weight: 700;
+            }
+
+            .dashboard-info-2 .text-3 {
+                color: #222222;
+                font-size: 0.875em;
+                font-weight: 400;
+            }
+
+            .dashboard-info-2 .indicator-wrapper{
+                border-radius:0.5em;
+                overflow:hidden;
+            }
+
+            .dashboard-info-2 .indicator-wrapper .indicator{
+                background:#222222;
+                padding:0.25em 0.5em;
+                font-size:1em;
+                font-weight:700;
+                color:#FFFF00;
+                text-align:center;
+                display:block;
+            }
+
+            .history-title {
+                color: #FFFF00;
+                font-weight: 700;
+                font-size: 2em;
+                font-family: 'PT Sans Narrow';
+            }
+
+            .lotto-type-buttons-wrapper{
+                border: 0;
+                padding: 9px;
+                box-shadow: inset 2px 2px 5px rgba(0,0,0,0.25), inset -2px -2px 5px rgba(255,255,255,0.125) !important;
+                border-radius: 1em;
+                overflow: hidden;
+                background: #222222;
+            }
+
+            .lotto-type-buttons-wrapper .lotto-type-button{
+                border: 0;
+                color: #FFFF00;
+                padding: 6px 12px;
+                font-weight: 700;
+                background: transparent;
+            }
+            
+            .lotto-type-button.selected{
+                padding: 6px 12px;
+                background: #FFFF00;
+                font-weight: 700;
+                color: #222222;
+                border-radius: calc(1em - 6px);
+                pointer-events: none;
+            }
+            
+            .lotto-history-body{
+            position:relative;
+            }
+            
+            .show{
+                display:block;  
+            }
+            
+            .table-striped>tbody>tr:nth-of-type(odd) {
+                --bs-table-accent-bg: var(--bs-table-striped-bg);
+            }
+            
+            .table {
+                overflow: hidden;
+                border-radius: 1em;
+                font-size: 1em;
+                text-align: center;
+                color: #FFF !important;
+                border: 0em solid #A7A800 !important;
+                position: relative !important;
+                box-shadow: inset 2px 2px 5px rgba(0,0,0,0.25), inset -2px -2px 5px rgba(255,255,255,0.125) !important;
+                border-radius: 1em !important;
+                background: transparent;
+            }
+
+            .table>:not(caption)>*>*
+            {
+                border-bottom-width: 1px;
+                box-shadow: none;
+            }
+
+            table tbody tr:last-child td{
+                border-bottom-width: 0 !important;
+            }
+
+            .table tr > * {
+                border-color:rgba(255,255,255,0.025) !important;
+            }
+
+            .table-striped>tbody>tr:nth-of-type(odd) {
+                color: #FFF;
+            }
+
+            .table-striped>thead>tr>th{
+                color: #FFFF00;
+                font-weight:400;
+                width:33.33%;
+            }
+
+            .table-striped>tbody>tr>td{
+                font-weight:400;
+            }
+
+            .table-striped>tbody>tr:hover{
+                background-color:rgba(0,0,0,0.025);
+            }
+
+            #mLottoHistoryTable .text-1{
+                color:#FFFF00;
+            }
+
+            #mLottoHistoryTable .text-2{
+                color:#fff;
+            }
+
+            .track-button{
+                color:#FFFF00;
+                font-weight:600;
+                font-size:0.75em;
+                border:1px solid #FFFF00;
+                border-radius:8px;
+                padding:4px 8px;
+                background:#222222;
+            }
+            
+            .track-button:hover,.track-button:focus{
+                color:#222222;
+                border:1px solid #FFFF00;
+                background:#FFFF00;
+            }
+
+
+            #dLottoHistoryTable span.skeleton-content-1{
+                border-radius:0.25em;
+                width:200px;
+                height:20px;
+                display:inline-block;
+                animation: skeleton-loading-3 1s linear infinite alternate;
+            }
+
+            #dLottoHistoryTable span.skeleton-content-2{
+                border-radius:0.25em;
+                width:170px;
+                height:20px;
+                display:inline-block;
+                animation: skeleton-loading-3 1s linear infinite alternate;
+            }
+
+            #dLottoHistoryTable span.skeleton-content-3{
+                border-radius:0.25em;
+                width:45px;
+                height:20px;
+                display:inline-block;
+                animation: skeleton-loading-2 1s linear infinite alternate;
+            }
+
+            #dLottoHistoryTable span.skeleton-content-4{
+                border-radius:0.25em;
+                width:70px;
+                height:20px;
+                display:inline-block;
+                animation: skeleton-loading-3 1s linear infinite alternate;
+            }
+
+            #mLottoHistoryTable span.skeleton-content-1{
+                border-radius:0.25em;
+                width:200px;
+                height:20px;
+                display:inline-block;
+                animation: skeleton-loading-3 1s linear infinite alternate;
+            }
+
+            #mLottoHistoryTable span.skeleton-content-2{
+                border-radius:0.25em;
+                width:170px;
+                height:20px;
+                display:inline-block;
+                animation: skeleton-loading-3 1s linear infinite alternate;
+            }
+
+            #mLottoHistoryTable span.skeleton-content-3{
+                border-radius:0.25em;
+                width:45px;
+                height:20px;
+                display:inline-block;
+                animation: skeleton-loading-2 1s linear infinite alternate;
+            }
+
+            #mLottoHistoryTable span.skeleton-content-4{
+                border-radius:0.25em;
+                width:70px;
+                height:20px;
+                display:inline-block;
+                animation: skeleton-loading-3 1s linear infinite alternate;
+            }
+
+            .footer-section{
+                color:#FFFFFF;
+            }
+
+            .footer-section ul > li {
+                display: inline-block;
+                zoom:1;
+                margin-left:10px;
+                margin-right:10px;
+                margin-bottom:8px;
+            }
+
+            .footer-section a {
+                color:#FFFFFF;
+                font-size:1.25em;
+            }
+
+            .footer-section .fa {
+                height: 60px;
+                width: 60px;
+                text-decoration: none;
+                margin: 9px 6px;
+                border-radius: 50%;
+                display: flex;
+                color: #222222;
+                border: 2px solid #FFFF00;
+                align-items: center!important;
+                justify-content: center!important;
+                background:#FFFF00;
+                box-shadow: 2px 2px 8px rgba(22, 22, 22,1), -2px -2px 8px rgba(107, 107, 107,1) !important;
+                transition: all .2s ease;
+            }
+            
+            .footer-section .fa svg{
+                fill:#222222;   
+            }
+
+            .footer-section .fa:hover {
+                transform: translate(0,2px);
+            }
+        </style>
+    </head>
+    <body data-aos-easing="ease" data-aos-duration="1000" data-aos-delay="0" style="overflow-y:hidden;">
+        <header>
+            <nav class="navbar navbar-expand-lg" id="#home">
+                <div class="container-fluid d-flex flex-column flex-lg-row align-items-center">
+                    <div class="flex-item">
+                        <a class="navbar-brand" href="/">
+                        </a>
+                    </div>
+                    <div class="flex-item order-2 order-lg-1 d-none">
+                        <div class="lotto-tier-buttons-wrapper mt-3 mt-lg-0">
+                            <button id="jsLottoTier1Button" class="lotto-tier-button selected">TIER 1</button>
+                            <button id="jsLottoTier2Button" class="lotto-tier-button">TIER 2</button>
+                            <button id="jsLottoTier3Button" class="lotto-tier-button">TIER 3</button>
+                        </div>
+                    </div>
+                    <div class="flex-item order-1 order-lg-2" style="width:100%">
+                        <div class="d-flex flex-row">
+                            <button class="btn btn-primary me-3 mt-4 mt-lg-0 d-flex flex-row align-items-center" id="jsConnectWalletButton" type="button" style="background:#222 !important;color:#FFF !important;box-shadow:inset 2px 2px 5px rgba(0,0,0,0.25), inset -2px -2px 5px rgba(255,255,255,0.125) !important"><img class="img img-fluid me-2" width="24px" style="border-radius:50%;" src="https://www.pinksale.finance/_next/static/media/ic-bsc.a3213bd0.svg">BINANCE SMART CHAIN
+<svg class="ms-3" width="12px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" fill="#FFF"><!--!Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M137.4 374.6c12.5 12.5 32.8 12.5 45.3 0l128-128c9.2-9.2 11.9-22.9 6.9-34.9s-16.6-19.8-29.6-19.8L32 192c-12.9 0-24.6 7.8-29.6 19.8s-2.2 25.7 6.9 34.9l128 128z"></path></svg></button>
+<button class="btn btn-primary mt-4 mt-lg-0 d-flex flex-row align-items-center" id="jsSettingsButton" type="button" style="box-shadow:none !important;background:none !important;box-shadow:none !important;color:#fff !important;opacity:1">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="16px" fill="#FFF" class="me-2"><!--!Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M64 32C28.7 32 0 60.7 0 96V416c0 35.3 28.7 64 64 64H448c35.3 0 64-28.7 64-64V192c0-35.3-28.7-64-64-64H80c-8.8 0-16-7.2-16-16s7.2-16 16-16H448c17.7 0 32-14.3 32-32s-14.3-32-32-32H64zM416 272a32 32 0 1 1 0 64 32 32 0 1 1 0-64z"></path></svg> 0xa300....0c83
+                            </button>
+                            <button class="btn btn-primary ms-3 mt-4 mt-lg-0" id="jsConnectWalletButton" type="button">
+                                DISCONNECT WALLET
+                            </button>
+                            <button class="btn btn-primary ms-3 mt-4 mt-lg-0 d-none" id="jsDisconnectWalletButton" type="button">
+                                DISCONNECT WALLET
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+        </header>
+        <style>
+            .connectwallet-section{
+                position:fixed;
+                top:0;
+                left:0;
+                
+                background:rgba(0,0,0,0.50);
+                z-index:2;
+                justify-content: end !important;
+                align-items: end !important;
+                width:0;
+                height:0;
+                display:flex;
+                opacity:0;
+                /*transition: opacity .3s ease;*/
+            }
+
+            .connectwallet-section.show{
+                opacity:1;
+                width:100%;
+                height:100%;
+                /*transition: opacity .3s ease;*/
+            }
+
+            .connectwallet-section .connectwallet-wapper{
+                width:100%;
+                border: 0em solid #A7A800 !important;
+                position: relative !important;
+                box-shadow: 2px 2px 4px rgba(0, 0, 0,0.25), -2px -2px 4px rgba(255, 255, 255,0.25) !important;
+                border-top-left-radius: 1em;
+                border-top-right-radius: 1em;
+                border-bottom-left-radius: 0em;
+                border-bottom-right-radius: 0em;
+                background: rgba(34, 34, 34, 1);
+                overflow: hidden;
+                padding:2em 2em;
+            }
+
+            .connectwallet-section .connectwallet-wapper .container{
+                padding:0;
+            }
+
+            .connectwallet-section h2{
+                font-size:2em;
+                font-weight:700;
+            }
+
+            .connectwallet-section .btn-connectwallet{
+                -webkit-user-select: none;
+                -ms-user-select: none;
+                user-select: none;
+                color: #FFF !important;
+                background: #222 !important;
+                font-size: 1.25em !important;
+                border: 0em solid #535400 !important;
+                /*box-shadow: 2px 2px 4px rgba(0, 0, 0,0.25), -2px -2px 4px rgba(255, 255, 255,0.25) !important;*/
+                border-radius: 1em;
+                position: relative;
+                transition: all .2s ease;
+                padding:0.25em 0.5em;
+                width:100%;
+                height:100%;
+                transition: transform .2s ease;
+            }
+
+            
+            .connectwallet-section .btn-connectwallet:focus:enabled,
+            .connectwallet-section .btn-connectwallet:hover:enabled,
+            .connectwallet-section .btn-connectwallet:active:enabled{
+                transform: translate(0,2px); 
+            }
+            
+            .connectwallet-section .btn-connectwallet:disabled{
+                pointer-events: auto;
+                opacity: .65;
+                cursor: default;
+            }
+
+            .connectwallet-section .btn-connectwallet img{
+                width:100%;
+            }
+
+            .connectwallet-section .btn-connectwallet svg{
+                width:100%;
+            }
+
+            .connectwallet-section .btn-connectwallet .svg-wrapper{
+                background:#161616;
+                border-radius:1em;
+                overflow:hidden;
+
+            }
+
+           .connectwallet-section .btn-connectwallet span{
+                margin-top:0.5em;
+                font-size:0.675em;
+                font-weight:400;
+            }
+
+            .connectwallet-section .connectwallet-options-wrapper{
+                border: 0em solid #A7A800 !important;
+                position: relative !important;
+                box-shadow: inset 2px 2px 5px rgba(0,0,0,0.25), inset -2px -2px 5px rgba(255,255,255,0.125) !important;
+                border-radius: 1em !important;
+                background: transparent;
+                padding:1em;
+            }
+
+            @media (min-width: 992px) {
+                .connectwallet-section{
+                    justify-content: center !important;
+                    align-items: center !important;
+                }
+
+                .connectwallet-section .connectwallet-wapper{
+                    border-top-left-radius: 1em;
+                    border-top-right-radius: 1em;
+                    border-bottom-left-radius: 1em;
+                    border-bottom-right-radius: 1em;
+                    padding:3em 3em;
+                    max-width:400px;
+                }
+            }
+
+            .progress{
+                transition: all .3s ease;
+            }
+        </style>
+
+        <style>
+        .wallet-address-input-wrapper{
+         border:0;
+         padding:9px;
+         box-shadow: inset 2px 2px 5px rgba(0,0,0,0.25), inset -2px -2px 5px rgba(255,255,255,0.125) !important;
+         border-radius:1em;
+         overflow:hidden;
+         display:flex;
+         flex-direction:row;
+         width:100%;
+        }
+        
+        .wallet-address-input-wrapper input[type=text]{
+         background:transparent;
+         border:0 !important;
+         outline:0 !important;
+         box-shadow:none !important;
+         color:#fff;
+        }
+        
+        .wallet-address-input-wrapper button{
+            border-radius: calc(1em - 6px);
+            padding: 6px 12px;
+            background: #FFFF00;
+            font-weight: 700;
+            color: #222222;
+            border:0;
+            white-space: nowrap;
+        }
+
+        .input-select{
+            box-shadow: inset 2px 2px 5px rgba(0,0,0,0.25), inset -2px -2px 5px rgba(255,255,255,0.125) !important;
+            border: 0;
+            padding:15px 21px;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            border-radius:1em;
+            color:#FFF;
+            position:relative;
+            outline:none !important;
+            background: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 4 5'%3e%3cpath fill='%23FFF' d='M2 0L0 2h4zm0 5L0 3h4z'/%3e%3c/svg%3e") no-repeat right .75rem center/8px 10px;
+            background-color:#222222;
+            width:100%;
+        }
+
+        .socials-link-wrapper{
+            right:16px;
+            top:52px;
+            position:absolute;
+        }       
+        .socials-link-wrapper a:not(first-child){
+            margin-left:0.5em;
+            background:#222222;
+            border-radius:50%;
+        }       
+        .socials-link-wrapper svg{
+            fill:#FFFF00;
+            stroke:#FFFF00;
+            height:20px;
+            width:20px;
+        }       
+        .socials-link-wrapper a:nth-child(1) svg, .socials-link-wrapper a:nth-child(4) svg{
+            fill:#222;
+            stroke:#FFFF00;
+        }       
+        
+        .image-wrapper img:nth-child(1){
+            border-radius:50%;
+            overflow:hidden;
+        }
+
+        .status-type-wrapper{
+            position:absolute;
+            right:16px;
+            top:16px;
+        }
+
+        
+
+        .capped{
+            font-size:0.75em !important;
+            background:rgba(255, 255, 255, 0.125) !important;
+            color:#FFF !important;
+            letter-spacing:0.125em !important;
+        }
+
+        .timed{
+            font-size:0.75em !important;
+            background:rgba(255, 255, 0, 0.125) !important;
+            color:#FFFF00 !important;
+            letter-spacing:0.125em !important;
+        }
+
+        .live{
+            font-size:0.75em !important;
+            background:rgba(42, 255, 0, 0.125)!important;;
+            color:#2AFF00 !important;;
+            letter-spacing:0.125em !important;;
+        }
+
+        .ended{
+            font-size:0.75em !important;
+            background:rgba(255, 5, 0, 0.125) !important;
+            color:#FF0500 !important;
+            letter-spacing:0.125em !important;
+            
+        }
+
+        #dashboard{
+            opacity:1;
+        }
+
+        #jsViewLottery{
+            opacity:0;
+        }
+
+        .fade{
+            transition:opacity .32s ease;
+        }
+
+        .show{
+            opacity:1 !important;
+            z-index:1 !important;
+            pointer-events: default;
+        }
+
+        .hide{
+            z-index:0 !important;
+            opacity:0 !important;
+            pointer-events: none;
+        }
+
+        #jsViewLottery.show{
+           
+        }
+
+        #jsBuyTokensWrapper{
+            opacity:1;
+        }
+
+        #jsDrawsWrapper{
+            opacity:0;
+        }
+
+        #jsDrawsWrapper.show{
+            
+        }
+        </style>
+
+        <div id="jsMain" style="position:relative;">
+            <section id="dashboard" class="dashboard-section fade show" style="position:absolute;top:0;width:100%;">
+                <div class="container-fluid mt-2">
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="wallet-address-input-wrapper me-2 mt-3 mt-lg-0" >
+                                <input type="text" class="form-control" id="jsSearch" name="search" placeholder="Enter address, name, symbol, host, ID">
+                            </div>
+                        </div>
+                        <div class="col-2">
+                            <select class="input-select" id="jsNetwork" name="network" ><option selected="selected" value="All">All Network</option><option value="BSC">Binance Smart Chain</option><option value="Ethereum">Ethereum</option><option value="Polygon">Polygon</option></select>
+                        </div>
+                        <div class="col-2">
+                            <select class="input-select" id="jsStatus" name="status" ><option selected="selected" value="All">All Status</option><option value="Live">Live</option><option value="Ended">Ended</option></select>
+                        </div>
+                        <div class="col-2">
+                            <select class="input-select" id="jsType" name="type" ><option selected="selected" value="All">All Type</option><option value="Timed">Timed</option><option value="Capped">Capped</option></select>
+                        </div>
+                    </div>
+                    <div class="row mt-4" id="jsLotteryContainer">
+                        
+                    </div>
+                </div>
+            </section>
+
+            <section id="jsViewLottery" class="dashboard-section fade" style="position:absolute;top:0;width:100%;">
+                <div class="container-fluid mt-2">
+                    <div class="row mt-4" id="jsLotteryContainer">
+                        <div class="col-12 col-lg-4 py-2 ms-auto">
+                            <div class="dashboard-info d-flex flex-column align-items-start px-3" style="height:auto;box-shadow: none !important;;">
+                                <div class="d-flex flex-row w-100">
+                                    <div class="flex-item w-100">
+                                        <div class="js-skeleton-content-wrapper">
+                                            <div class="image-wrapper" style="position:relative;">
+                                                <img class="img img-fluid" style="width:100%;border-radius:8px;aspect-ratio: 5 / 1;object-fit:cover;" src="https://dd.dexscreener.com/ds-data/tokens/ethereum/0x576e2bed8f7b46d34016198911cdf9886f78bea7/header.png"></div></div></div></div><div class="d-flex flex-row align-items-center mt-3"><div class="flex-item"><div class="js-skeleton-content-wrapper"><div class="image-wrapper" style="position:relative;"><img class="img img-fluid" width="64px" src="https://dd.dexscreener.com/ds-data/tokens/bsc/0x4ea98c1999575aaadfb38237dd015c5e773f75a2.png?size=lg&amp;key=5ca67a"><img class="img img-fluid" width="24px" style="border-radius:50%;/*border:2px solid #FFFF00;*/position:absolute;bottom:0;right:0;" src="https://www.pinksale.finance/_next/static/media/ic-bsc.a3213bd0.svg"></div></div></div><div class="flex-item ps-3"><div class="js-skeleton-content-wrapper d-flex flex-row align-items-center"><span class="text-1" style="font-size:1.25em;font-weight:700;">MAGA</span><span class="text-1 ms-2" style="background: #222;padding: 0.125em 0.25em;font-size: 0.875em;font-weight: 700;color: #FFFF00;text-align: center;border-radius:12px;">LOTTERY#46</span></div><div class="js-skeleton-content-wrapper"><span class="text-1" style="font-size:1em;color:rgba(255,255,255,0.5)">Hosted by: </span><a href="#" style="color:#FFFF00">0xDb51578D...92636080</a></div></div></div><div class="d-flex flex-row justify-content-between" style="width:100%;"><div class="flex-item"><div class="js-skeleton-content-wrapper mt-3"><span class="text-1" style="font-size:1em;">Prize Pot</span></div><div class="js-skeleton-content-wrapper"><span class="text-1" id="jsPrizePot" style="font-size:1.5em;color:#FFFF00;font-weight:700;">$452,570</span></div><div class="js-skeleton-content-wrapper"><span class="text-1" id="jsPrizePotInTokens" style="font-size:1em;color:rgba(255,255,255,0.5)">83,500 $TRUMP</span></div></div><div class="flex-item" style="width:50%;"><div class="js-skeleton-content-wrapper mt-3 text-end"><div class="d-flex flex-row justify-content-between"><div class="flex-item"><span class="text-1" style="font-size:1em;">Tickets Sale</span></div><div class="flex-item"><span class="text-1" id="jsProgressPercentage" style="font-size:1em;font-weight:700;color:#FFF000">83.50%</span></div></div></div><div class="js-skeleton-content-wrapper" style="margin-top:6px;"><div class="progress-bar" style="border-radius:100px;background:none;border:1px solid #FFF000;padding:2px;height:24px;width:100%"><div class="progress" id="jsProgress" style="border-radius:100px;height:100%;background:#FFF000;width:83.50%"></div></div></div><div class="js-skeleton-content-wrapper" style="margin-top:6px;"><div class="js-skeleton-content-wrapper text-end"><div class="d-flex flex-row justify-content-between"><div class="flex-item d-flex flex-row"><svg width="16px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" fill="#FFF"><!--!Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M64 64C28.7 64 0 92.7 0 128v64c0 8.8 7.4 15.7 15.7 18.6C34.5 217.1 48 235 48 256s-13.5 38.9-32.3 45.4C7.4 304.3 0 311.2 0 320v64c0 35.3 28.7 64 64 64H512c35.3 0 64-28.7 64-64V320c0-8.8-7.4-15.7-15.7-18.6C541.5 294.9 528 277 528 256s13.5-38.9 32.3-45.4c8.3-2.9 15.7-9.8 15.7-18.6V128c0-35.3-28.7-64-64-64H64zm64 112l0 160c0 8.8 7.2 16 16 16H432c8.8 0 16-7.2 16-16V176c0-8.8-7.2-16-16-16H144c-8.8 0-16 7.2-16 16zM96 160c0-17.7 14.3-32 32-32H448c17.7 0 32 14.3 32 32V352c0 17.7-14.3 32-32 32H128c-17.7 0-32-14.3-32-32V160z"></path></svg><span class="text-1 ms-1" style="font-size:1em;" id="jsTicketSoldProgress">8,350</span></div><div class="flex-item d-flex flex-row"><svg width="16px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" fill="#FFF"><!--!Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M64 64C28.7 64 0 92.7 0 128v64c0 8.8 7.4 15.7 15.7 18.6C34.5 217.1 48 235 48 256s-13.5 38.9-32.3 45.4C7.4 304.3 0 311.2 0 320v64c0 35.3 28.7 64 64 64H512c35.3 0 64-28.7 64-64V320c0-8.8-7.4-15.7-15.7-18.6C541.5 294.9 528 277 528 256s13.5-38.9 32.3-45.4c8.3-2.9 15.7-9.8 15.7-18.6V128c0-35.3-28.7-64-64-64H64zm64 112l0 160c0 8.8 7.2 16 16 16H432c8.8 0 16-7.2 16-16V176c0-8.8-7.2-16-16-16H144c-8.8 0-16 7.2-16 16zM96 160c0-17.7 14.3-32 32-32H448c17.7 0 32 14.3 32 32V352c0 17.7-14.3 32-32 32H128c-17.7 0-32-14.3-32-32V160z"></path></svg><span class="text-1 ms-1" style="font-size:1em;">10,000</span></div></div></div></div></div></div>        <div class="mt-3 mb-3 mx-auto" style="height:1px;width:100%;background:#FFF;opacity:0.1"></div>        <div class="d-flex flex-row justify-content-between align-items-center" style="width:100%;">            <div class="d-flex flex-row justify-content-between align-items-center w-100">               <div class="flex-item" style="width:33.33%;">                   <div class="flex-item d-flex flex-column align-items-center">                       <div class="js-skeleton-content-wrapper">                           <span class="text-1" style="font-size:1em;">Ticket Price</span>                        </div>                       <div class="js-skeleton-content-wrapper text-center d-flex flex-row">                           <span class="text-1" style="font-size:1.25em;color:#FFFF00;font-weight:700;">10 $TRUMP</span>                       </div>                   </div>               </div>                                <div class="flex-item" style="width:33.33%;">                    <div class="flex-item d-flex flex-column align-items-center">                        <div class="js-skeleton-content-wrapper">                                                        <span class="text-1" style="font-size:1em;">Tickets Sold</span>                        </div>                        <div class="js-skeleton-content-wrapper text-center d-flex flex-row ">                                                        <svg width="16px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" fill="#FFFF00"><!--!Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M64 64C28.7 64 0 92.7 0 128v64c0 8.8 7.4 15.7 15.7 18.6C34.5 217.1 48 235 48 256s-13.5 38.9-32.3 45.4C7.4 304.3 0 311.2 0 320v64c0 35.3 28.7 64 64 64H512c35.3 0 64-28.7 64-64V320c0-8.8-7.4-15.7-15.7-18.6C541.5 294.9 528 277 528 256s13.5-38.9 32.3-45.4c8.3-2.9 15.7-9.8 15.7-18.6V128c0-35.3-28.7-64-64-64H64zm64 112l0 160c0 8.8 7.2 16 16 16H432c8.8 0 16-7.2 16-16V176c0-8.8-7.2-16-16-16H144c-8.8 0-16 7.2-16 16zM96 160c0-17.7 14.3-32 32-32H448c17.7 0 32 14.3 32 32V352c0 17.7-14.3 32-32 32H128c-17.7 0-32-14.3-32-32V160z"></path></svg><span class="text-1 ms-2" id="jsTicketsSold" style="font-size:1.25em;color:#FFFF00;font-weight:700;">8,350</span>                        </div>                    </div>                </div>                                <div class="flex-item " style="width:33.33%;">                    <div class="flex-item d-flex flex-column align-items-center">                        <div class="js-skeleton-content-wrapper">                                                        <span class="text-1" style="font-size:1em;">Your Tickets</span>                        </div>                        <div class="js-skeleton-content-wrapper text-center d-flex flex-row">                                                        <svg width="16px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" fill="#FFFF00"><!--!Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M64 64C28.7 64 0 92.7 0 128v64c0 8.8 7.4 15.7 15.7 18.6C34.5 217.1 48 235 48 256s-13.5 38.9-32.3 45.4C7.4 304.3 0 311.2 0 320v64c0 35.3 28.7 64 64 64H512c35.3 0 64-28.7 64-64V320c0-8.8-7.4-15.7-15.7-18.6C541.5 294.9 528 277 528 256s13.5-38.9 32.3-45.4c8.3-2.9 15.7-9.8 15.7-18.6V128c0-35.3-28.7-64-64-64H64zm64 112l0 160c0 8.8 7.2 16 16 16H432c8.8 0 16-7.2 16-16V176c0-8.8-7.2-16-16-16H144c-8.8 0-16 7.2-16 16zM96 160c0-17.7 14.3-32 32-32H448c17.7 0 32 14.3 32 32V352c0 17.7-14.3 32-32 32H128c-17.7 0-32-14.3-32-32V160z"></path></svg><span class="text-1 ms-2" id="jsYourTickets" style="font-size:1.25em;color:#FFFF00;font-weight:700;">0</span>                        </div>                    </div>                </div>                  </div>        <div class="d-flex flex-row status-type-wrapper" style="top:134px"><div class="js-skeleton-content-wrapper indicator-wrapper"><span class="indicator capped" id="jsFilledPercentage">CAPPED</span></div><div class="js-skeleton-content-wrapper indicator-wrapper ms-2"><span class="indicator live" id="jsFilledPercentage">LIVE</span></div>       </div>        
+                                                <div class="socials-link-wrapper d-flex flex-row" style="top:168px">            <a href="#" target="_blank" rel="nofollow noreferrer"><svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" class="text-brand" height="18" width="18" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg></a>            <a href="https://t.me/" target="_blank" rel="nofollow noreferrer"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 448 512" class="text-brand" height="18" width="18" xmlns="http://www.w3.org/2000/svg"><path d="M446.7 98.6l-67.6 318.8c-5.1 22.5-18.4 28.1-37.3 17.5l-103-75.9-49.7 47.8c-5.5 5.5-10.1 10.1-20.7 10.1l7.4-104.9 190.9-172.5c8.3-7.4-1.8-11.5-12.9-4.1L117.8 284 16.2 252.2c-22.1-6.9-22.5-22.1 4.6-32.7L418.2 66.4c18.4-6.9 34.5 4.1 28.5 32.2z"></path></svg></a>            <a href="https://discord.gg/" target="_blank" rel="nofollow noreferrer"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 640 512" class="text-brand" height="18" width="18" xmlns="http://www.w3.org/2000/svg"><path d="M524.531,69.836a1.5,1.5,0,0,0-.764-.7A485.065,485.065,0,0,0,404.081,32.03a1.816,1.816,0,0,0-1.923.91,337.461,337.461,0,0,0-14.9,30.6,447.848,447.848,0,0,0-134.426,0,309.541,309.541,0,0,0-15.135-30.6,1.89,1.89,0,0,0-1.924-.91A483.689,483.689,0,0,0,116.085,69.137a1.712,1.712,0,0,0-.788.676C39.068,183.651,18.186,294.69,28.43,404.354a2.016,2.016,0,0,0,.765,1.375A487.666,487.666,0,0,0,176.02,479.918a1.9,1.9,0,0,0,2.063-.676A348.2,348.2,0,0,0,208.12,430.4a1.86,1.86,0,0,0-1.019-2.588,321.173,321.173,0,0,1-45.868-21.853,1.885,1.885,0,0,1-.185-3.126c3.082-2.309,6.166-4.711,9.109-7.137a1.819,1.819,0,0,1,1.9-.256c96.229,43.917,200.41,43.917,295.5,0a1.812,1.812,0,0,1,1.924.233c2.944,2.426,6.027,4.851,9.132,7.16a1.884,1.884,0,0,1-.162,3.126,301.407,301.407,0,0,1-45.89,21.83,1.875,1.875,0,0,0-1,2.611,391.055,391.055,0,0,0,30.014,48.815,1.864,1.864,0,0,0,2.063.7A486.048,486.048,0,0,0,610.7,405.729a1.882,1.882,0,0,0,.765-1.352C623.729,277.594,590.933,167.465,524.531,69.836ZM222.491,337.58c-28.972,0-52.844-26.587-52.844-59.239S193.056,219.1,222.491,219.1c29.665,0,53.306,26.82,52.843,59.239C275.334,310.993,251.924,337.58,222.491,337.58Zm195.38,0c-28.971,0-52.843-26.587-52.843-59.239S388.437,219.1,417.871,219.1c29.667,0,53.307,26.82,52.844,59.239C470.715,310.993,447.538,337.58,417.871,337.58Z"></path></svg></a>            <a href="https://twitter.com/" target="_blank" rel="nofollow noreferrer"><svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" class="text-brand" height="18" width="18" xmlns="http://www.w3.org/2000/svg"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path></svg></a>            <a href="https://www.facebook.com/" target="_blank" rel="nofollow noreferrer"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024" class="text-brand" height="18" width="18" xmlns="http://www.w3.org/2000/svg"><path d="M880 112H144c-17.7 0-32 14.3-32 32v736c0 17.7 14.3 32 32 32h736c17.7 0 32-14.3 32-32V144c0-17.7-14.3-32-32-32zm-32 736H663.9V602.2h104l15.6-120.7H663.9v-77.1c0-35 9.7-58.8 59.8-58.8h63.9v-108c-11.1-1.5-49-4.8-93.2-4.8-92.2 0-155.3 56.3-155.3 159.6v89H434.9v120.7h104.3V848H176V176h672v672z"></path></svg></a>            <a href="https://github.com/" target="_blank" rel="nofollow noreferrer"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 16 16" class="text-brand" height="18" width="18" xmlns="http://www.w3.org/2000/svg"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0 0 16 8c0-4.42-3.58-8-8-8z"></path></svg></a>        </div>
+                                                </div> </div> <div class="mt-5 lotto-history-body aos-init aos-animate w-100" data-aos="fade">
+                                                    <div class="d-flex flex-row align-items-center justify-content-between"><span class="history-title aos-init aos-animate" data-aos="fade-right">RAFFLE TICKETS</span><div class="lotto-type-buttons-wrapper aos-init aos-animate" data-aos="fade-left"><button id="u9Gd0VnQvRHdvx0YpNXYCNna" class="lotto-type-button selected">ALL TICKETS</button><button id="gbvRHd1J0b0R3bMR3bQNna" class="lotto-type-button">MY TICKETS</button></div></div>
+                                                        <table class="table mt-4 table-striped d-none d-lg-table "><thead><tr style="font-weight:500"><th class="py-3">Raffle Ticket #</th><th class="py-3">Date Purchased</th><th class="py-3">Owner</th></tr></thead>
+                                                            
+                                                    <tbody id="dLottoHistoryTable">
+                                                    
+                                                        
+
+                                                    <tr style="font-weight:600;"><td class="py-3">#8350</td><td class="py-3" style="white-space:nowrap">2024/05/03 03:30:00 PM UTC</td><td class="py-3">0x81D4....93E7</td></tr>
+
+                                                    <tr style="font-weight:600;"><td class="py-3">#8349</td><td class="py-3" style="white-space:nowrap">2024/04/03 03:30:00 PM UTC</td><td class="py-3">0x81D4....93E7</td></tr>
+                                                    
+                                                    <tr style="font-weight:600;"><td class="py-3">#8348</td><td class="py-3" style="white-space:nowrap">2024/04/03 03:30:00 PM UTC</td><td class="py-3">0x81D4....93E7</td></tr>
+                                                    
+                                                    <tr style="font-weight:600;"><td class="py-3">#8347</td><td class="py-3" style="white-space:nowrap">2024/04/03 12:24:08 AM UTC</td><td class="py-3">0x7b27....9aaB</td></tr>
+                                                    
+                                                    <tr style="font-weight:600;"><td class="py-3">#8346</td><td class="py-3" style="white-space:nowrap">2024/04/03 12:24:08 AM UTC</td><td class="py-3">0x7b27....9aaB</td></tr>
+                                                    
+                                                    <tr style="font-weight:600;"><td class="py-3">#8345</td><td class="py-3" style="white-space:nowrap">2024/04/02 09:18:27 PM UTC</td><td class="py-3">0x7c88....5dAA</td></tr>
+                                                    
+                                                    <tr style="font-weight:600;"><td class="py-3">#8344</td><td class="py-3" style="white-space:nowrap">2024/04/02 09:18:27 PM UTC</td><td class="py-3">0x7c88....5dAA</td></tr>
+                                                    
+                                                    <tr style="font-weight:600;"><td class="py-3">#8343</td><td class="py-3" style="white-space:nowrap">2024/04/02 09:18:27 PM UTC</td><td class="py-3">0x7c88....5dAA</td></tr>
+                                                    
+                                                    <tr style="font-weight:600;"><td class="py-3">#8342</td><td class="py-3" style="white-space:nowrap">2024/04/03 10:08:43 AM UTC</td><td class="py-3">0x7c88....5dAA</td></tr>
+                                                    
+                                                    <tr style="font-weight:600;"><td class="py-3">#8341</td><td class="py-3" style="white-space:nowrap">2024/04/03 10:08:43 AM UTC</td><td class="py-3">0x23b6....0D3a</td></tr>
+                                                
+                                                </tbody></table><table class="table table-striped show-skeleton d-lg-none"><tbody id="mLottoHistoryTable"><tr><td class="py-3"><span class="d-block text-1">Date</span><span class="d-block mt-1 text-2">2024/04/18 10:08:43 AM UTC</span><span class="d-block mt-3 text-1">Wallet Address</span><span class="d-block mt-1 text-2">0x23b66B54...502D0D3a<a class="ms-2" target="_blank" href="https://testnet.bscscan.com/token/0x250254922628d9b79e8aCfec86E91983FF977785?a=0x23b66B54ee7f98bAbc3bd6931FB6aAf0502D0D3a"><button class="track-button">Track</button></a></span><span class="d-block mt-3 text-1">Tokens Received</span><span class="d-block mt-1 text-2">30,000 $TOKEN</span></td></tr><tr><td class="py-3"><span class="d-block text-1">Date</span><span class="d-block mt-1 text-2">2024/04/18 10:04:16 AM UTC</span><span class="d-block mt-3 text-1">Wallet Address</span><span class="d-block mt-1 text-2">0xf3C30Ca4...bcD5E7d7<a class="ms-2" target="_blank" href="https://testnet.bscscan.com/token/0x250254922628d9b79e8aCfec86E91983FF977785?a=0xf3C30Ca4ceE3B5eA851D297369De1Db2bcD5E7d7"><button class="track-button">Track</button></a></span><span class="d-block mt-3 text-1">Tokens Received</span><span class="d-block mt-1 text-2">30,000 $TOKEN</span></td></tr><tr><td class="py-3"><span class="d-block text-1">Date</span><span class="d-block mt-1 text-2">2024/04/18 10:01:58 AM UTC</span><span class="d-block mt-3 text-1">Wallet Address</span><span class="d-block mt-1 text-2">0xf3C30Ca4...bcD5E7d7<a class="ms-2" target="_blank" href="https://testnet.bscscan.com/token/0x250254922628d9b79e8aCfec86E91983FF977785?a=0xf3C30Ca4ceE3B5eA851D297369De1Db2bcD5E7d7"><button class="track-button">Track</button></a></span><span class="d-block mt-3 text-1">Tokens Received</span><span class="d-block mt-1 text-2">30,000 $TOKEN</span></td></tr><tr><td class="py-3"><span class="d-block text-1">Date</span><span class="d-block mt-1 text-2">2024/04/17 02:09:21 PM UTC</span><span class="d-block mt-3 text-1">Wallet Address</span><span class="d-block mt-1 text-2">0x879A614B...192a6b0a<a class="ms-2" target="_blank" href="https://testnet.bscscan.com/token/0x250254922628d9b79e8aCfec86E91983FF977785?a=0x879A614B1fcf639ddB54D3d18f19365a192a6b0a"><button class="track-button">Track</button></a></span><span class="d-block mt-3 text-1">Tokens Received</span><span class="d-block mt-1 text-2">36,000 $TOKEN</span></td></tr><tr><td class="py-3"><span class="d-block text-1">Date</span><span class="d-block mt-1 text-2">2024/04/17 02:08:48 PM UTC</span><span class="d-block mt-3 text-1">Wallet Address</span><span class="d-block mt-1 text-2">0x879A614B...192a6b0a<a class="ms-2" target="_blank" href="https://testnet.bscscan.com/token/0x250254922628d9b79e8aCfec86E91983FF977785?a=0x879A614B1fcf639ddB54D3d18f19365a192a6b0a"><button class="track-button">Track</button></a></span><span class="d-block mt-3 text-1">Tokens Received</span><span class="d-block mt-1 text-2">33,000 $TOKEN</span></td></tr><tr><td class="py-3"><span class="d-block text-1">Date</span><span class="d-block mt-1 text-2">2024/04/17 02:07:24 PM UTC</span><span class="d-block mt-3 text-1">Wallet Address</span><span class="d-block mt-1 text-2">0xC5dBA225...35e44735<a class="ms-2" target="_blank" href="https://testnet.bscscan.com/token/0x250254922628d9b79e8aCfec86E91983FF977785?a=0xC5dBA225C1D8bB5f764ECE2a539fed4635e44735"><button class="track-button">Track</button></a></span><span class="d-block mt-3 text-1">Tokens Received</span><span class="d-block mt-1 text-2">30,000 $TOKEN</span></td></tr><tr><td class="py-3"><span class="d-block text-1">Date</span><span class="d-block mt-1 text-2">2024/04/17 02:07:03 PM UTC</span><span class="d-block mt-3 text-1">Wallet Address</span><span class="d-block mt-1 text-2">0x403A7d96...5fB7Fc15<a class="ms-2" target="_blank" href="https://testnet.bscscan.com/token/0x250254922628d9b79e8aCfec86E91983FF977785?a=0x403A7d9642F0cC7C514fD7ae03E42F2d5fB7Fc15"><button class="track-button">Track</button></a></span><span class="d-block mt-3 text-1">Tokens Received</span><span class="d-block mt-1 text-2">27,000 $TOKEN</span></td></tr><tr><td class="py-3"><span class="d-block text-1">Date</span><span class="d-block mt-1 text-2">2024/04/17 02:06:42 PM UTC</span><span class="d-block mt-3 text-1">Wallet Address</span><span class="d-block mt-1 text-2">0x403A7d96...5fB7Fc15<a class="ms-2" target="_blank" href="https://testnet.bscscan.com/token/0x250254922628d9b79e8aCfec86E91983FF977785?a=0x403A7d9642F0cC7C514fD7ae03E42F2d5fB7Fc15"><button class="track-button">Track</button></a></span><span class="d-block mt-3 text-1">Tokens Received</span><span class="d-block mt-1 text-2">24,000 $TOKEN</span></td></tr><tr><td class="py-3"><span class="d-block text-1">Date</span><span class="d-block mt-1 text-2">2024/04/17 02:05:30 PM UTC</span><span class="d-block mt-3 text-1">Wallet Address</span><span class="d-block mt-1 text-2">0xC5dBA225...35e44735<a class="ms-2" target="_blank" href="https://testnet.bscscan.com/token/0x250254922628d9b79e8aCfec86E91983FF977785?a=0xC5dBA225C1D8bB5f764ECE2a539fed4635e44735"><button class="track-button">Track</button></a></span><span class="d-block mt-3 text-1">Tokens Received</span><span class="d-block mt-1 text-2">21,000 $TOKEN</span></td></tr><tr><td class="py-3"><span class="d-block text-1">Date</span><span class="d-block mt-1 text-2">2024/04/17 02:05:06 PM UTC</span><span class="d-block mt-3 text-1">Wallet Address</span><span class="d-block mt-1 text-2">0x24174172...8799857c<a class="ms-2" target="_blank" href="https://testnet.bscscan.com/token/0x250254922628d9b79e8aCfec86E91983FF977785?a=0x24174172360F9DcaCfA79475614cD9908799857c"><button class="track-button">Track</button></a></span><span class="d-block mt-3 text-1">Tokens Received</span><span class="d-block mt-1 text-2">18,000 $TOKEN</span></td></tr><tr><td class="py-3"><span class="d-block text-1">Date</span><span class="d-block mt-1 text-2">2024/04/17 02:04:42 PM UTC</span><span class="d-block mt-3 text-1">Wallet Address</span><span class="d-block mt-1 text-2">0x403A7d96...5fB7Fc15<a class="ms-2" target="_blank" href="https://testnet.bscscan.com/token/0x250254922628d9b79e8aCfec86E91983FF977785?a=0x403A7d9642F0cC7C514fD7ae03E42F2d5fB7Fc15"><button class="track-button">Track</button></a></span><span class="d-block mt-3 text-1">Tokens Received</span><span class="d-block mt-1 text-2">15,000 $TOKEN</span></td></tr><tr><td class="py-3"><span class="d-block text-1">Date</span><span class="d-block mt-1 text-2">2024/04/17 02:04:12 PM UTC</span><span class="d-block mt-3 text-1">Wallet Address</span><span class="d-block mt-1 text-2">0xC5dBA225...35e44735<a class="ms-2" target="_blank" href="https://testnet.bscscan.com/token/0x250254922628d9b79e8aCfec86E91983FF977785?a=0xC5dBA225C1D8bB5f764ECE2a539fed4635e44735"><button class="track-button">Track</button></a></span><span class="d-block mt-3 text-1">Tokens Received</span><span class="d-block mt-1 text-2">12,000 $TOKEN</span></td></tr></tbody></table></div>
+                </div>    
+                    
+                <div class="col-12 col-lg-3 py-2 me-auto" style="position:relative;width:420px;">
+                    <div id="jsBuyTokensWrapper" class="connectwallet-wapper px-3 py-4 fade show" style="margin:8px 12px;position:absolute;top:0;border-radius:16px;box-shadow: inset 2px 2px 5px rgba(0,0,0,.25),inset -2px -2px 5px rgba(255,255,255,.125)!important;">
+                    <div class="container">
+                        <h2 class="text-center" style="font-size:2em;
+                    font-weight:700;"><span style="color:#FFFF00">BUY </span> <span class="d-block d-lg-inline">TICKETS</span></h2>
+                        
+                        <div class="row mt-4">
+                            <!--<div class="col-5">
+                            <div class="d-flex flex-row"><div style="font-size:3em;font-weight:700;color:#FFF000;line-height:1;font-family:'PT Sans Narrow'">NO</div><div class="d-flex flex-column justify-content-center ms-2"><div>OF</div><div style="margin-top:-0.125em">TICKETS</div></div></div>
+                        </div>-->
+                        <div class="col-12">
+                            <div class="wallet-address-input-wrapper me-2 mt-3 mt-lg-0 aos-init aos-animate" style="position:relative;">
+                                
+                                <input type="text" class="form-control" id="jsTicketsNo" name="ticketsNo" placeholder="0" style="padding-right:68px;text-align: right;">
+                                    
+                                    <span style="position:absolute;left:21px; top: 50%;
+                                        transform: translateY(-50%);font-weight:400;color:rgba(255,255,255,0.5);pointer-events: none;">No. of tickets</span>
+                                        
+                                <span id="jsMax" style="position:absolute;right:21px; top: 50%;
+                                        transform: translateY(-50%);font-weight:400;color:#FFF000;font-size:0.75em;border-radius:8px;padding:4px 8px;border:1px solid #fff000;cursor:hand">MAX</span>
+                                                            </div>
+                            <div class="d-block mt-1 text-end" style="font-size:0.75em;color:rgba(255,255,255,1)">Your Balance: <span style="color:#FFF000" id="jsTokenBalance">24,000 $TRUMP</span></div>
+                        </div>
+    <div class="col-6 mt-3">
+                            <span>Price Per Ticket</span>
+                        </div>
+                        <div class="col-6 mt-3 text-end">
+                            <span style="font-weight:700;color:#FFF000" id="jsTicketPrice">10 $TRUMP</span>
+                        <span class="d-block" style="font-size:0.75em;font-weight:400;color:rgba(255,255,255,0.5)" id="jsTicketPriceInUSD">~ $54.2</span></div><div class="col-12">
+                            <div class="mt-3 mb-3 mx-auto" style="height:1px;width:100%;background:#FFF;opacity:0.1"></div>
+                        </div>
+    
+    <div class="col-4">
+                            <span>Total Price</span>
+                        </div>
+    <div class="col-8 text-end">
+                            <span style="font-weight:700;color:#FFF000" id="jsTotalPrice">0 $TRUMP</span>
+    <span class="d-block" style="font-size:0.75em;font-weight:400;color:rgba(255,255,255,0.5)" id="jsTotalPriceInUSD">~ $0.00</span>
+                        </div><div class="col-12">
+                            <button id="jsBuyTicket" class="btn btn-primary mt-4" type="button" style="box-shadow: 2px 2px 4px rgba(0, 0, 0,0.25), -2px -2px 4px rgba(255, 255, 255,0.25) !important;font-size:1em !important;width:100%;">BUY TICKET</button>
+                        </div></div>
+                    </div>
+                </div>
+    <div id="jsDrawsWrapper" class="connectwallet-wapper px-0 py-4 fade" style="height:383.391px;margin:8px 12px;border-radius:16px;box-shadow: inset 2px 2px 5px rgba(0,0,0,.25),inset -2px -2px 5px rgba(255,255,255,.125)!important;position:absolute;top:0;">
+                    <div class="container">
+                        <h2 class="text-center" style="font-size:2em;
+                    font-weight:700;"><span style="color:#FFFF00">DRAWS </span> <span class="d-block d-lg-inline">IN</span></h2>
+                        
+                        <div class="row mt-4">
+                            <!--<div class="col-5">
+                            <div class="d-flex flex-row"><div style="font-size:3em;font-weight:700;color:#FFF000;line-height:1;font-family:'PT Sans Narrow'">NO</div><div class="d-flex flex-column justify-content-center ms-2"><div>OF</div><div style="margin-top:-0.125em">TICKETS</div></div></div>
+                        </div>-->
+                        <div class="col-12 mb-2">
+    <div class="d-flex flex-row justify-content-center">
+        <div class="flex-item">
+        <span class="d-block text-center" id="jsHours" style="font-size:3em;color:#FFFF00;font-weight:700;">00</span>
+        <span class="d-block text-center" style="font-size:1em;color:#FFF;font-weight:400;">HOURS</span>
+        </div>
+        <div class="flex-item ms-4">
+            <span class="d-block text-center" id="jsMinutes" style="font-size:3em;color:#FFFF00;font-weight:700;">00</span>
+            <span class="d-block text-center" style="font-size:1em;color:#FFF;font-weight:400;">MINUTES</span>
+        </div>
+        <div class="flex-item ms-4">
+            <span class="d-block text-center" id="jsSeconds" style="font-size:3em;color:#FFFF00;font-weight:700;">00</span>
+            <span class="d-block text-center" style="font-size:1em;color:#FFF;font-weight:400;">SECONDS</span>
+        </div></div>
+    
+    
+                            
+                            
+                        </div>
+    <div class="col-12 mt-4">
+                            <p class="d-block text-center mb-0" style="font-size:1.125em;">The lucky winner will win the prize pot<br><span style="color:#FFF000;font-weight:700;">100,000 $TRUMP</span> worth <span style="color:#FFF000;font-weight:700;">$542,000</span></p>
+                        </div>
+
+                        <div class="col-12 mt-3">
+                            <p class="d-block text-center" style="font-size:1.125em;">You bought <span style="color:#FFF000;font-weight:700;">1,650 tickets</span>. Your chance of winning this raffle is <span style="color:#FFF000;font-weight:700;">14.16%</span></p>
+                        </div>
+    
+                        
+    
+    
+    </div>
+                    </div>
+                </div>
+                <div id="jsWinWrapper" class="connectwallet-wapper px-3 py-4 fade" style="height:383.391px;margin:8px 12px;border-radius:16px;box-shadow: inset 2px 2px 5px rgba(0,0,0,.25),inset -2px -2px 5px rgba(255,255,255,.125)!important;position:absolute;top:0;">
+                    <div class="container">
+                        <h2 class="text-center" style="font-size:2em;
+                    font-weight:700;"><span style="color:#FFFF00">CONGRATULATIONS</span> </h2>
+                        
+                        <div class="row mt-4">
+                            <!--<div class="col-5">
+                            <div class="d-flex flex-row"><div style="font-size:3em;font-weight:700;color:#FFF000;line-height:1;font-family:'PT Sans Narrow'">NO</div><div class="d-flex flex-column justify-content-center ms-2"><div>OF</div><div style="margin-top:-0.125em">TICKETS</div></div></div>
+                        </div>-->
+                        <div class="col-12 mb-2">
+    <div class="d-flex flex-row justify-content-center">
+        
+        
+        <div class="flex-item">
+            <div class="py-3 px-5" style="background:#FFFF00;border-radius:8px;position:relative;"><span style="color:#222222;font-size:2.5em;font-weight:700">#2408</span>
+
+<div style="background:#222;left:-23px;position:absolute;top: 50%;
+    transform: translateY(-50%);height:46px;width:46px;border-radius:50%;"></div>
+
+<div style="background:#222;right:-23px;position:absolute;top: 50%;
+    transform: translateY(-50%);height:46px;width:46px;border-radius:50%;"></div></div>
+            
+        </div></div>
+    
+    
+                            
+                            
+                        </div>
+    <div class="col-12">
+                            <p class="d-block text-center mb-0" style="font-size:1.125em;"><span style="font-size:1em;font-weight:400;opacity:1">Owner </span><span style="color:#FFF000;font-weight:700;">0x2a08....34C7</span></p>
+                        </div>
+
+                        
+
+<div class="col-12 mt-3">
+                            <p class="d-block text-center mb-0" style="font-size:1.125em;">You're won the prize pot<br><span style="color:#FFF000;font-weight:700;">100,000 $TRUMP</span> worth <span style="color:#FFF000;font-weight:700;">$542,000</span></p>
+                        </div><div class="col-12 mt-4">
+                            <button id="jsBuyTicket" class="btn btn-primary" type="button" style="box-shadow: 2px 2px 4px rgba(0, 0, 0,0.25), -2px -2px 4px rgba(255, 255, 255,0.25) !important;font-size:1em !important;width:100%;">CLAIM PRIZE</button>
+                        </div>
+    
+                        
+    
+    
+    </div>
+                    </div>
+                </div>
+                <div class="d-flex flex-row w-100 py-4" style="width:384px !important;margin-top:428px;margin-left:12px;margin-right:12px;border-radius: 16px;
+                box-shadow: inset 2px 2px 5px rgba(0,0,0,.25),inset -2px -2px 5px rgba(255,255,255,.125)!important;">
+            <div class="flex-item d-flex flex-column" style="width:25%">
+            <div class="image text-center">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="#FFFF00" height="24px"><!--!Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M47.6 300.4L228.3 469.1c7.5 7 17.4 10.9 27.7 10.9s20.2-3.9 27.7-10.9L464.4 300.4c30.4-28.3 47.6-68 47.6-109.5v-5.8c0-69.9-50.5-129.5-119.4-141C347 36.5 300.6 51.4 268 84L256 96 244 84c-32.6-32.6-79-47.5-124.6-39.9C50.5 55.6 0 115.2 0 185.1v5.8c0 41.5 17.2 81.2 47.6 109.5z"></path></svg>
+            </div>
+            <div class="text text-center mt-2" style="font-size:0.75em;font-weight:700;color:#FFFF00">LIKE</div>
+            </div>
+            
+            
+            
+            
+            <div class="flex-item d-flex flex-column" style="width:25%">
+            <div class="image text-center">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512" fill="#FFFF00" height="24px"><!--!Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M0 48V487.7C0 501.1 10.9 512 24.3 512c5 0 9.9-1.5 14-4.4L192 400 345.7 507.6c4.1 2.9 9 4.4 14 4.4c13.4 0 24.3-10.9 24.3-24.3V48c0-26.5-21.5-48-48-48H48C21.5 0 0 21.5 0 48z"></path></svg>
+            </div>
+            <div class="text text-center mt-2" style="font-size:0.75em;font-weight:700;color:#FFFF00">BOOKMARK</div>
+            </div><div class="flex-item d-flex flex-column" style="width:25%">
+            <div class="image text-center"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="#FFFF00" height="24px"><!--!Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M307 34.8c-11.5 5.1-19 16.6-19 29.2v64H176C78.8 128 0 206.8 0 304C0 417.3 81.5 467.9 100.2 478.1c2.5 1.4 5.3 1.9 8.1 1.9c10.9 0 19.7-8.9 19.7-19.7c0-7.5-4.3-14.4-9.8-19.5C108.8 431.9 96 414.4 96 384c0-53 43-96 96-96h96v64c0 12.6 7.4 24.1 19 29.2s25 3 34.4-5.4l160-144c6.7-6.1 10.6-14.7 10.6-23.8s-3.8-17.7-10.6-23.8l-160-144c-9.4-8.5-22.9-10.6-34.4-5.4z"></path></svg></div>
+            <div class="text text-center mt-2" style="font-size:0.75em;font-weight:700;color:#FFFF00">SHARE</div>
+            </div><div class="flex-item d-flex flex-column" style="width:25%">
+            <div class="image text-center"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" fill="#FFFF00" height="24px"><!--!Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M0 64C0 28.7 28.7 0 64 0H224V128c0 17.7 14.3 32 32 32H384V288H216c-13.3 0-24 10.7-24 24s10.7 24 24 24H384V448c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V64zM384 336V288H494.1l-39-39c-9.4-9.4-9.4-24.6 0-33.9s24.6-9.4 33.9 0l80 80c9.4 9.4 9.4 24.6 0 33.9l-80 80c-9.4 9.4-24.6 9.4-33.9 0s-9.4-24.6 0-33.9l39-39H384zm0-208H256V0L384 128z"></path></svg></div>
+            <div class="text text-center mt-2" style="font-size:0.75em;font-weight:700;color:#FFFF00">EMBED</div>
+            </div></div>
+        </div></div>
+                    
+                </div>
+            </section>
+        </div>
+        
+       
+        <script src="js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+        <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+        <script>
+            const jsLotteryContainer = document.querySelector('#jsLotteryContainer');
+            let walletInfo = {'tokenBalance':24000};
+            let networkImage = {'BSC':'https://www.pinksale.finance/_next/static/media/ic-bsc.a3213bd0.svg','Ethereum':'https://www.pinksale.finance/_next/static/media/ic-eth.4213cf87.svg','Polygon':'https://www.pinksale.finance/_next/static/media/ic-polygon.5928bc28.png'};
+            let prices = {'0x111':0.08482,'0x222':5.42,'0x333':0.1626,'0x444':0.0001238,'0x555':0.00000532,'0x666':0.000001702,'0x777':0.6432,'0x888':0.03804,'0x999':0.03635};
+            let lottery = [     {lotteryID:47,network:'BSC',status:'Live',type:'Timed',host:'0xa3007e43f8a8bCbB13d7c1AaEF8bD0Ab6F5A0C83',address:'0x111',name:'Catboy',symbol:'CATBOY',imageURL:'https://dd.dexscreener.com/ds-data/tokens/bsc/0x0dcee5f694e492f0dd842a7fbe5bed4c6e4665a6.png',endTimestamp:'1714875274000',ticketPrice:240,ticketSold:6380,yourTickets:0},
+                                {lotteryID:46,network:'BSC',status:'Live',type:'Capped',host:'0xDb51578D23DDc6e01C5217B7E33C11Cf92636080',address:'0x222',name:'MAGA',symbol:'TRUMP',imageURL:'https://dd.dexscreener.com/ds-data/tokens/bsc/0x4ea98c1999575aaadfb38237dd015c5e773f75a2.png?size=lg&key=5ca67a',endTimestamp:'',ticketCap:10000,ticketPrice:10,ticketSold:8350,yourTickets:0},
+                                {lotteryID:45,network:'BSC',status:'Live',type:'Timed',host:'0x3376f2867c53e67D8EDa16D86A3c8527f885Ad7d',address:'0x333',name:'Scorpion',symbol:'SCORP',imageURL:'https://dd.dexscreener.com/ds-data/tokens/bsc/0xa910a46e2f2002fa9b5aa85f35b9440f6dac4b10.png?size=lg&key=0a6924',endTimestamp:'1715963001000',ticketPrice:340,ticketSold:3090,yourTickets:0},
+                                {lotteryID:44,network:'Ethereum',status:'Live',type:'Capped',host:'0x7b2307bC6cE7f438CC3d7Fe0EE997312Bfc3bcd5',address:'0x444',name:'Andy',symbol:'ANDY',imageURL:'https://dd.dexscreener.com/ds-data/tokens/ethereum/0x68bbed6a47194eff1cf514b50ea91895597fc91e.png?size=lg&key=5fcb23',endTimestamp:'',ticketCap:50000,ticketPrice:38110,ticketSold:44140,yourTickets:0},
+                                {lotteryID:43,network:'Ethereum',status:'Live',type:'Timed',host:'0x4f2e25f926fa01b155DD12a8f4C4D5eE65748Fc6',address:'0x555',name:'Pepe',symbol:'PEPE',imageURL:'https://dd.dexscreener.com/ds-data/tokens/ethereum/0x6982508145454ce325ddbe47a25d4ec3d2311933.png?size=lg&key=7d789c',endTimestamp:'1716280395000',ticketPrice:1000000,ticketSold:76550,yourTickets:0},
+                                {lotteryID:42,network:'Ethereum',status:'Live',type:'Capped',host:'0x2111E2528b96d65Ba02a95939674A1423f179D61',address:'0x666',name:'BOBO',symbol:'BOBO',imageURL:'https://dd.dexscreener.com/ds-data/tokens/ethereum/0xb90b2a35c65dbc466b04240097ca756ad2005295.png?size=lg&key=65b21c',endTimestamp:'',ticketCap:550000,ticketPrice:973900,ticketSold:235200,yourTickets:0},
+                                {lotteryID:41,network:'Polygon',status:'Live',type:'Timed',host:'0x0584e61f9dc895290Bbde165D7177428aeb9c164',address:'0x777',name:'Argocoin',symbol:'AGC',imageURL:'https://dd.dexscreener.com/ds-data/tokens/polygon/0x2ad2934d5bfb7912304754479dd1f096d5c807da.png?size=lg&key=3bd9ef',endTimestamp:'1714948390000',ticketPrice:100,ticketSold:2555,yourTickets:0},
+                                {lotteryID:40,network:'Polygon',status:'Live',type:'Capped',host:'0x1504946f7C20159820d5ab198aABE1a5BBde0E9E',address:'0x888',name:'METAL',symbol:'METAL',imageURL:'https://dd.dexscreener.com/ds-data/tokens/polygon/0x200c234721b5e549c3693ccc93cf191f90dc2af9.png?size=lg&key=ad2818',endTimestamp:'',ticketCap:12000,ticketPrice:900,ticketSold:7198,yourTickets:0},
+                                {lotteryID:39,network:'Polygon',status:'Live',type:'Timed',host:'0x81c43Ad6c86936AeFb02E2024aDD13D37A741899',address:'0x999',name:'Bonsai Token',symbol:'BONSAI',imageURL:'https://dd.dexscreener.com/ds-data/tokens/polygon/0x3d2bd0e15829aa5c362a4144fdf4a1112fa29b5c.png?size=lg&key=056d0e',endTimestamp:'1715625201000',ticketPrice:1000,ticketSold:5244,yourTickets:0},
+
+                                {lotteryID:32,network:'Ethereum',status:'Live',type:'Timed',host:'0x2287E088AA6D146543d1d8A5B98077E19F99B184',address:'0x222',name:'MAGA',symbol:'TRUMP',imageURL:'https://dd.dexscreener.com/ds-data/tokens/bsc/0x4ea98c1999575aaadfb38237dd015c5e773f75a2.png?size=lg&key=5ca67a',endTimestamp:'1715725201000',ticketPrice:15,ticketSold:3796,yourTickets:0},
+                                {lotteryID:29,network:'BSC',status:'Live',type:'Timed',host:'0x1D7A324e4c7E9d829Daf80ba709bAcC92BFE1A49',address:'0x222',name:'MAGA',symbol:'TRUMP',imageURL:'https://dd.dexscreener.com/ds-data/tokens/bsc/0x4ea98c1999575aaadfb38237dd015c5e773f75a2.png?size=lg&key=5ca67a',endTimestamp:'1715048390000',ticketPrice:7,ticketSold:473,yourTickets:0},
+                                {lotteryID:22,network:'Ethereum',status:'Live',type:'Capped',host:'0xe819ACa5c5ec00A8ff807A903B099F17f0860ce2',address:'0x222',name:'MAGA',symbol:'TRUMP',imageURL:'https://dd.dexscreener.com/ds-data/tokens/bsc/0x4ea98c1999575aaadfb38237dd015c5e773f75a2.png?size=lg&key=5ca67a',endTimestamp:'',ticketCap:3000,ticketPrice:25,ticketSold:735,yourTickets:0},
+                                {lotteryID:16,network:'Ethereum',status:'Live',type:'Capped',host:'0x1b02217aaF4f05396c61FC88c4ba45Ee8AA23746',address:'0x222',name:'MAGA',symbol:'TRUMP',imageURL:'https://dd.dexscreener.com/ds-data/tokens/bsc/0x4ea98c1999575aaadfb38237dd015c5e773f75a2.png?size=lg&key=5ca67a',endTimestamp:'',ticketCap:5000,ticketPrice:5,ticketSold:1648,yourTickets:0},
+                                {lotteryID:13,network:'Ethereum',status:'Ended',type:'Timed',host:'0xfE0BB0D9c903A071CE3f5D717ab1b62aab33D996',address:'0x222',name:'MAGA',symbol:'TRUMP',imageURL:'https://dd.dexscreener.com/ds-data/tokens/bsc/0x4ea98c1999575aaadfb38237dd015c5e773f75a2.png?size=lg&key=5ca67a',endTimestamp:'1712571598000',ticketPrice:16,ticketSold:3813,yourTickets:0},
+                                {lotteryID:11,network:'BSC',status:'Ended',type:'Timed',host:'0x137423d9452C69932383040cAF3d9eE68A60fe79',address:'0x222',name:'MAGA',symbol:'TRUMP',imageURL:'https://dd.dexscreener.com/ds-data/tokens/bsc/0x4ea98c1999575aaadfb38237dd015c5e773f75a2.png?size=lg&key=5ca67a',endTimestamp:'1713099455000',ticketPrice:4,ticketSold:5567,yourTickets:0},
+                                {lotteryID:7,network:'Ethereum',status:'Ended',type:'Capped',host:'0x738A1125cE8dCf25Be72f94453905cfDBcF46146',address:'0x222',name:'MAGA',symbol:'TRUMP',imageURL:'https://dd.dexscreener.com/ds-data/tokens/bsc/0x4ea98c1999575aaadfb38237dd015c5e773f75a2.png?size=lg&key=5ca67a',endTimestamp:'',ticketCap:8000,ticketPrice:12,ticketSold:8000,yourTickets:0},
+                                {lotteryID:9,network:'BSC',status:'Ended',type:'Capped',host:'0xBf0882da32cBdfAf266aE0c4235f548d0A046323',address:'0x222',name:'MAGA',symbol:'TRUMP',imageURL:'https://dd.dexscreener.com/ds-data/tokens/bsc/0x4ea98c1999575aaadfb38237dd015c5e773f75a2.png?size=lg&key=5ca67a',endTimestamp:'',ticketCap:50000,ticketPrice:1,ticketSold:50000,yourTickets:0},
+                            ];
+            window.onload = () => {
+                render();
+            }
+
+        </script>
+        <script>
+            let pickedLottery = {};
+
+            const jsSearch = document.querySelector('#jsSearch');
+            const jsNetwork = document.querySelector('#jsNetwork');
+            const jsStatus = document.querySelector('#jsStatus');
+            const jsType = document.querySelector('#jsType');
+
+            jsSearch.addEventListener('input',() => {
+                render();
+            });
+
+            jsNetwork.addEventListener('change',() => {
+                render();
+            });
+
+            jsStatus.addEventListener('change',() => {
+                render();
+            });
+
+            jsType.addEventListener('change',() => {
+                render();
+            });
+
+            const render = () => {
+                jsLotteryContainer.innerHTML = '';
+                for (const row of lottery){
+
+                    let filter = true;
+
+                    if(jsNetwork.value != 'All'){
+                        if(row.network != jsNetwork.value){
+                            filter = false;
+                        }
+                    }
+
+                    if(jsStatus.value != 'All'){
+                        if(row.status != jsStatus.value){
+                            filter = false;
+                        }
+                    }
+
+                    if(jsType.value != 'All'){
+                        if(row.type != jsType.value){
+                            filter = false;
+                        }
+                    }
+
+                    if(!(row.lotteryID.toString().includes(jsSearch.value) || row.address.includes(jsSearch.value) || row.name.includes(jsSearch.value) || row.symbol.includes(jsSearch.value) || row.host.includes(jsSearch.value))){
+                        filter = false;
+                    }
+                    
+
+                    if(filter == true){
+                        const timestampToDateTime = moment.utc(parseInt(row.endTimestamp)).format('YYYY/MM/DD hh:mm:ss A');
+                    jsLotteryContainer.innerHTML =  jsLotteryContainer.innerHTML + '<div class="col-12 col-lg-4 py-2">' +
+                                                                                        '<div class="dashboard-info d-flex flex-column align-items-start p-3"  style="height:auto;">' +
+                                                                                            '<div class="d-flex flex-row align-items-center">' +
+                                                                                                '<div class="flex-item">' +
+                                                                                                    '<div class="js-skeleton-content-wrapper">' +
+                                                                                                        '' +
+                                                                                                        '<div class="image-wrapper" style="position:relative;">' +
+                                                                                                            '<img class="img img-fluid" width="64px" src="' + row.imageURL + '"/>' +
+                                                                                                            '<img class="img img-fluid" width="24px" style="border-radius:50%;/*border:2px solid #FFFF00;*/position:absolute;bottom:0;right:0;" src="' + networkImage[row.network] + '"/>' +
+                                                                                                        '</div>' +
+                                                                                                    '</div>' +
+                                                                                                '</div>' +
+                                                                                                '<div class="flex-item ps-3">' +
+                                                                                                    '<div class="js-skeleton-content-wrapper d-flex flex-row align-items-center">' +
+                                                                                                        '' +
+                                                                                                        '<span class="text-1" style="font-size:1.25em;font-weight:700;">' + row.name + '</span>' +
+                                                                                                        '<span class="text-1 ms-2" style="background: #222;padding: 0.125em 0.25em;font-size: 0.875em;font-weight: 700;color: #FFFF00;text-align: center;border-radius:12px;">LOTTERY#' + row.lotteryID + '</span>' +
+                                                                                                    '</div>' +
+                                                                                                    '<div class="js-skeleton-content-wrapper">' + 
+                                                                                                    '<span class="text-1" style="font-size:1em;color:rgba(255,255,255,0.5)">Hosted by: </span><a href="#" style="color:#FFFF00">' + row.host.slice(0,10) + '...' + row.host.slice(34,50) + '</a></div></div></div><div class="d-flex flex-row justify-content-between" style="width:100%;"><div class="flex-item"><div class="js-skeleton-content-wrapper mt-3"><span class="text-1" style="font-size:1em;">Prize Pot</span></div><div class="js-skeleton-content-wrapper"><span class="text-1" id="jsPrizePot' + row.lotteryID + '" style="font-size:1.5em;color:#FFFF00;font-weight:700;">$' + (Number((row.ticketPrice * row.ticketSold * prices[row.address]).toFixed(2))).toLocaleString() + '</span></div><div class="js-skeleton-content-wrapper"><span class="text-1" id="jsPrizePotInTokens' + row.lotteryID + '" style="font-size:1em;color:rgba(255,255,255,0.5)">' + (row.ticketPrice * row.ticketSold).toLocaleString() + ' $' + row.symbol + '</span></div></div>' +
+                                                                                                    ((row.type == 'Timed') ? '<div class="flex-item"><div class="js-skeleton-content-wrapper mt-3 text-end"><span class="text-1" style="font-size:1em;">Lottery Ends In</span></div><div class="js-skeleton-content-wrapper text-end"><span class="text-1" style = "font-size:1.5em;color:#FFFF00;font-weight:700;" id="jsLotteryEnd' + row.lotteryID + '"></span></div><div class="js-skeleton-content-wrapper"><span class="text-1" style="font-size:1em;color:rgba(255,255,255,0.5)">' + timestampToDateTime + ' UTC</span></div></div></div>' : '<div class="flex-item" style="width:50%;"><div class="js-skeleton-content-wrapper mt-3 text-end"><div class="d-flex flex-row justify-content-between"><div class="flex-item"><span class="text-1" style="font-size:1em;">Tickets Sale</span></div><div class="flex-item"><span class="text-1" id="jsProgressPercentage' + row.lotteryID + '" style="font-size:1em;font-weight:700;color:#FFF000">' + ((row.ticketSold / row.ticketCap) * 100).toFixed(2) +'%</span></div></div></div><div class="js-skeleton-content-wrapper" style="margin-top:6px;"><div class="progress-bar" style="border-radius:100px;background:none;border:1px solid #FFF000;padding:2px;height:24px;width:100%"><div class="progress" id="jsProgress' + row.lotteryID + '" style="border-radius:100px;height:100%;background:#FFF000;width:' + ((row.ticketSold / row.ticketCap) * 100).toFixed(2) + '%"></div></div></div><div class="js-skeleton-content-wrapper" style="margin-top:6px;"><div class="js-skeleton-content-wrapper text-end"><div class="d-flex flex-row justify-content-between"><div class="flex-item d-flex flex-row"><svg width="16px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" fill="#FFF"><!--!Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M64 64C28.7 64 0 92.7 0 128v64c0 8.8 7.4 15.7 15.7 18.6C34.5 217.1 48 235 48 256s-13.5 38.9-32.3 45.4C7.4 304.3 0 311.2 0 320v64c0 35.3 28.7 64 64 64H512c35.3 0 64-28.7 64-64V320c0-8.8-7.4-15.7-15.7-18.6C541.5 294.9 528 277 528 256s13.5-38.9 32.3-45.4c8.3-2.9 15.7-9.8 15.7-18.6V128c0-35.3-28.7-64-64-64H64zm64 112l0 160c0 8.8 7.2 16 16 16H432c8.8 0 16-7.2 16-16V176c0-8.8-7.2-16-16-16H144c-8.8 0-16 7.2-16 16zM96 160c0-17.7 14.3-32 32-32H448c17.7 0 32 14.3 32 32V352c0 17.7-14.3 32-32 32H128c-17.7 0-32-14.3-32-32V160z"></path></svg><span class="text-1 ms-1" style="font-size:1em;" id="jsTicketSoldProgress' + row.lotteryID + '">' + row.ticketSold.toLocaleString() + '</span></div><div class="flex-item d-flex flex-row"><svg width="16px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" fill="#FFF"><!--!Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M64 64C28.7 64 0 92.7 0 128v64c0 8.8 7.4 15.7 15.7 18.6C34.5 217.1 48 235 48 256s-13.5 38.9-32.3 45.4C7.4 304.3 0 311.2 0 320v64c0 35.3 28.7 64 64 64H512c35.3 0 64-28.7 64-64V320c0-8.8-7.4-15.7-15.7-18.6C541.5 294.9 528 277 528 256s13.5-38.9 32.3-45.4c8.3-2.9 15.7-9.8 15.7-18.6V128c0-35.3-28.7-64-64-64H64zm64 112l0 160c0 8.8 7.2 16 16 16H432c8.8 0 16-7.2 16-16V176c0-8.8-7.2-16-16-16H144c-8.8 0-16 7.2-16 16zM96 160c0-17.7 14.3-32 32-32H448c17.7 0 32 14.3 32 32V352c0 17.7-14.3 32-32 32H128c-17.7 0-32-14.3-32-32V160z"></path></svg><span class="text-1 ms-1" style="font-size:1em;">' + row.ticketCap.toLocaleString() + '</span></div></div></div></div></div></div>') +
+                    '        <div class="mt-3 mb-3 mx-auto" style="height:1px;width:100%;background:#FFF;opacity:0.1"></div>' +
+                    '        <div class="d-flex flex-row justify-content-between align-items-center" style="width:100%;">' +
+                    '            <div class="d-flex flex-row">' +
+                    '               <div class="flex-item">' +
+                    '                   <div class="flex-item">' +
+                    '                       <div class="js-skeleton-content-wrapper">' +
+                    '                           <span class="text-1" style="font-size:1em;">Ticket Price</span>' + 
+                    '                        </div>'+ 
+                    '                       <div class="js-skeleton-content-wrapper text-center d-flex flex-row">' +
+                    '                           <span class="text-1" style="font-size:1.25em;color:#FFFF00;font-weight:700;">' + row.ticketPrice.toLocaleString() + ' $' + row.symbol + '</span>' +
+                    '                       </div>' + 
+                    '                   </div>' + 
+                    '               </div>' +
+                    '                <div class="ms-4 me-4 flex-item" style="height:54px;width:1px;background:#FFF;opacity:0.1;"></div>' +
+                    '                <div class="flex-item">' +
+                    '                    <div class="flex-item">' +
+                    '                        <div class="js-skeleton-content-wrapper">' +
+                    '                            ' +
+                    '                            <span class="text-1" style="font-size:1em;">Tickets Sold</span>' +
+                    '                        </div>' +
+                    '                        <div class="js-skeleton-content-wrapper text-center d-flex flex-row">' +
+                    '                            ' +
+                    '                            <svg width="16px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" fill="#FFFF00"><!--!Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M64 64C28.7 64 0 92.7 0 128v64c0 8.8 7.4 15.7 15.7 18.6C34.5 217.1 48 235 48 256s-13.5 38.9-32.3 45.4C7.4 304.3 0 311.2 0 320v64c0 35.3 28.7 64 64 64H512c35.3 0 64-28.7 64-64V320c0-8.8-7.4-15.7-15.7-18.6C541.5 294.9 528 277 528 256s13.5-38.9 32.3-45.4c8.3-2.9 15.7-9.8 15.7-18.6V128c0-35.3-28.7-64-64-64H64zm64 112l0 160c0 8.8 7.2 16 16 16H432c8.8 0 16-7.2 16-16V176c0-8.8-7.2-16-16-16H144c-8.8 0-16 7.2-16 16zM96 160c0-17.7 14.3-32 32-32H448c17.7 0 32 14.3 32 32V352c0 17.7-14.3 32-32 32H128c-17.7 0-32-14.3-32-32V160z"/></svg><span class="text-1 ms-2" id="jsTicketsSold' + row.lotteryID + '" style="font-size:1.25em;color:#FFFF00;font-weight:700;">' + row.ticketSold.toLocaleString() + '</span>' +
+                    '                        </div>' +
+                    '                    </div>' +
+                    '                </div>' +
+                    '                <div class="ms-4 me-4 flex-item" style="height:54px;width:1px;background:#FFF;opacity:0.1;"></div>' +
+                    '                <div class="flex-item">' +
+                    '                    <div class="flex-item">' +
+                    '                        <div class="js-skeleton-content-wrapper">' +
+                    '                            ' +
+                    '                            <span class="text-1" style="font-size:1em;">Your Tickets</span>' +
+                    '                        </div>' +
+                    '                        <div class="js-skeleton-content-wrapper text-center d-flex flex-row">' +
+                    '                            ' +
+                    '                            <svg width="16px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" fill="#FFFF00"><!--!Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M64 64C28.7 64 0 92.7 0 128v64c0 8.8 7.4 15.7 15.7 18.6C34.5 217.1 48 235 48 256s-13.5 38.9-32.3 45.4C7.4 304.3 0 311.2 0 320v64c0 35.3 28.7 64 64 64H512c35.3 0 64-28.7 64-64V320c0-8.8-7.4-15.7-15.7-18.6C541.5 294.9 528 277 528 256s13.5-38.9 32.3-45.4c8.3-2.9 15.7-9.8 15.7-18.6V128c0-35.3-28.7-64-64-64H64zm64 112l0 160c0 8.8 7.2 16 16 16H432c8.8 0 16-7.2 16-16V176c0-8.8-7.2-16-16-16H144c-8.8 0-16 7.2-16 16zM96 160c0-17.7 14.3-32 32-32H448c17.7 0 32 14.3 32 32V352c0 17.7-14.3 32-32 32H128c-17.7 0-32-14.3-32-32V160z"/></svg><span class="text-1 ms-2" id="jsYourTickets' + row.lotteryID + '" style="font-size:1.25em;color:#FFFF00;font-weight:700;">' + row.yourTickets.toLocaleString() + '</span>' +
+                    '                        </div>' +
+                    '                    </div>' +
+                    '                </div>      ' +
+                    '            </div>' +
+                    ((row.status == 'Live') ? '<div class="flex-item"><div class="js-skeleton-content-wrapper text-end"><button id="jsBuyTicket' + row.lotteryID + '" class="btn btn-primary ms-3 mt-4 mt-lg-0" type="button" style="box-shadow: 2px 2px 4px rgba(0, 0, 0,0.25), -2px -2px 4px rgba(255, 255, 255,0.25) !important;font-size:1em !important;">VIEW RAFFLE</button></div></div>': '') +
+                    '        <div class="d-flex flex-row status-type-wrapper">' + 
+                    ((row.type == 'Timed') ? '<div class="js-skeleton-content-wrapper indicator-wrapper"><span class="indicator timed" id="jsFilledPercentage">TIMED</span></div>' : '<div class="js-skeleton-content-wrapper indicator-wrapper"><span class="indicator capped" id="jsFilledPercentage">CAPPED</span></div>') + 
+                    ((row.status == 'Live') ? '<div class="js-skeleton-content-wrapper indicator-wrapper ms-2"><span class="indicator live" id="jsFilledPercentage">LIVE</span></div>' : '<div class="js-skeleton-content-wrapper indicator-wrapper ms-2"><span class="indicator ended" id="jsFilledPercentage">ENDED</span></div></div>') +
+                    '       </div>' +
+                    '        <div class="socials-link-wrapper d-flex flex-row">' +
+                    '            <a href="#" target="_blank" rel="nofollow noreferrer"><svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" class="text-brand" height="18" width="18" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg></a>' +
+                    '            <a href="https://t.me/" target="_blank" rel="nofollow noreferrer"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 448 512" class="text-brand" height="18" width="18" xmlns="http://www.w3.org/2000/svg"><path d="M446.7 98.6l-67.6 318.8c-5.1 22.5-18.4 28.1-37.3 17.5l-103-75.9-49.7 47.8c-5.5 5.5-10.1 10.1-20.7 10.1l7.4-104.9 190.9-172.5c8.3-7.4-1.8-11.5-12.9-4.1L117.8 284 16.2 252.2c-22.1-6.9-22.5-22.1 4.6-32.7L418.2 66.4c18.4-6.9 34.5 4.1 28.5 32.2z"></path></svg></a>' +
+                    '            <a href="https://discord.gg/" target="_blank" rel="nofollow noreferrer"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 640 512" class="text-brand" height="18" width="18" xmlns="http://www.w3.org/2000/svg"><path d="M524.531,69.836a1.5,1.5,0,0,0-.764-.7A485.065,485.065,0,0,0,404.081,32.03a1.816,1.816,0,0,0-1.923.91,337.461,337.461,0,0,0-14.9,30.6,447.848,447.848,0,0,0-134.426,0,309.541,309.541,0,0,0-15.135-30.6,1.89,1.89,0,0,0-1.924-.91A483.689,483.689,0,0,0,116.085,69.137a1.712,1.712,0,0,0-.788.676C39.068,183.651,18.186,294.69,28.43,404.354a2.016,2.016,0,0,0,.765,1.375A487.666,487.666,0,0,0,176.02,479.918a1.9,1.9,0,0,0,2.063-.676A348.2,348.2,0,0,0,208.12,430.4a1.86,1.86,0,0,0-1.019-2.588,321.173,321.173,0,0,1-45.868-21.853,1.885,1.885,0,0,1-.185-3.126c3.082-2.309,6.166-4.711,9.109-7.137a1.819,1.819,0,0,1,1.9-.256c96.229,43.917,200.41,43.917,295.5,0a1.812,1.812,0,0,1,1.924.233c2.944,2.426,6.027,4.851,9.132,7.16a1.884,1.884,0,0,1-.162,3.126,301.407,301.407,0,0,1-45.89,21.83,1.875,1.875,0,0,0-1,2.611,391.055,391.055,0,0,0,30.014,48.815,1.864,1.864,0,0,0,2.063.7A486.048,486.048,0,0,0,610.7,405.729a1.882,1.882,0,0,0,.765-1.352C623.729,277.594,590.933,167.465,524.531,69.836ZM222.491,337.58c-28.972,0-52.844-26.587-52.844-59.239S193.056,219.1,222.491,219.1c29.665,0,53.306,26.82,52.843,59.239C275.334,310.993,251.924,337.58,222.491,337.58Zm195.38,0c-28.971,0-52.843-26.587-52.843-59.239S388.437,219.1,417.871,219.1c29.667,0,53.307,26.82,52.844,59.239C470.715,310.993,447.538,337.58,417.871,337.58Z"></path></svg></a>' +
+                    '            <a href="https://twitter.com/" target="_blank" rel="nofollow noreferrer"><svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" class="text-brand" height="18" width="18" xmlns="http://www.w3.org/2000/svg"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path></svg></a>' +
+                    '            <a href="https://www.facebook.com/" target="_blank" rel="nofollow noreferrer"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024" class="text-brand" height="18" width="18" xmlns="http://www.w3.org/2000/svg"><path d="M880 112H144c-17.7 0-32 14.3-32 32v736c0 17.7 14.3 32 32 32h736c17.7 0 32-14.3 32-32V144c0-17.7-14.3-32-32-32zm-32 736H663.9V602.2h104l15.6-120.7H663.9v-77.1c0-35 9.7-58.8 59.8-58.8h63.9v-108c-11.1-1.5-49-4.8-93.2-4.8-92.2 0-155.3 56.3-155.3 159.6v89H434.9v120.7h104.3V848H176V176h672v672z"></path></svg></a>' +
+                    '            <a href="https://github.com/" target="_blank" rel="nofollow noreferrer"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 16 16" class="text-brand" height="18" width="18" xmlns="http://www.w3.org/2000/svg"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0 0 16 8c0-4.42-3.58-8-8-8z"></path></svg></a>' +
+                    '        </div>' +
+                    '    </div >       ' +                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
+                    '</div > ';
+
+                    if(row.type == 'Timed'){
+                        // Set the date we're counting down to
+                    const countDownDate = new Date(parseInt(row.endTimestamp)).getTime();
+
+                        // Get today's date and time
+                        let nowA = new Date().getTime();
+                        
+                        // Find the distance between now and the count down date
+                        let distanceA = countDownDate - nowA;
+                        
+                        // Time calculations for days, hours, minutes and seconds
+                        let daysA = Math.floor(distanceA / (1000 * 60 * 60 * 24));
+                        let hoursA = Math.floor((distanceA % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                        let minutesA = Math.floor((distanceA % (1000 * 60 * 60)) / (1000 * 60));
+                        let secondsA = Math.floor((distanceA % (1000 * 60)) / 1000);
+                        if(daysA < 10){
+                            daysA = '0' + daysA;
+                        }
+                        if(hoursA < 10){
+                            hoursA = '0' + hoursA;
+                        }
+                        if(minutesA < 10){
+                            minutesA = '0' + minutesA;
+                        }
+                        if(secondsA < 10){
+                            secondsA = '0' + secondsA;
+                        }
+                        // Output the result in an element with id="demo"
+                        document.querySelector('#jsLotteryEnd' + row.lotteryID).innerHTML = daysA + ":" + hoursA + ":"+ minutesA + ":" + secondsA;
+                    
+                        if(distanceA < 0){
+                        document.querySelector('#jsLotteryEnd' + row.lotteryID).innerHTML = 'ENDED'
+                        }
+                        // Update the count down every 1 second
+                        setInterval(function() {
+
+                            // Get today's date and time
+                            var now = new Date().getTime();
+                                
+                            // Find the distance between now and the count down date
+                            var distance = countDownDate - now;
+                                
+                            // Time calculations for days, hours, minutes and seconds
+                            var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                            var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                            var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                            var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+                            if(days < 10){
+                                days = '0' + days;
+                            }
+                            if(hours < 10){
+                                hours = '0' + hours;
+                            }
+                            if(minutes < 10){
+                                minutes = '0' + minutes;
+                            }
+                            if(seconds < 10){
+                                seconds = '0' + seconds;
+                            }
+                            // Output the result in an element with id="demo"
+                            document.querySelector('#jsLotteryEnd' + row.lotteryID).innerHTML = days + ":" + hours + ":"+ minutes + ":" + seconds;
+
+                            if(distance < 0){
+                                document.querySelector('#jsLotteryEnd' + row.lotteryID).innerHTML = 'ENDED'
+                            }
+                        }, 1000);
+                    }
+                }
+
+                if(row.lotteryID == 46){
+                    pickedLottery.ticketPrice = row.ticketPrice;
+                    pickedLottery.tokenPrice = prices[row.address];
+                    pickedLottery.ticketSold = row.ticketSold;
+                    pickedLottery.ticketCap = row.ticketCap;
+                    pickedLottery.prizePot = row.ticketPrice * row.ticketSold * prices[row.address];
+                    pickedLottery.symbol = row.symbol;
+                    }
+
+                }
+
+               
+
+                const jsBuyTicket46 = document.querySelector('#jsBuyTicket46');
+
+                jsBuyTicket46.addEventListener('click',()=>{
+                    document.querySelector('#dashboard').classList.add('hide');
+                    document.querySelector('#jsViewLottery').classList.add('show');
+                    document.querySelector('#jsTokenBalance').innerHTML = walletInfo.tokenBalance.toLocaleString() + ' $' + pickedLottery.symbol;
+                    document.querySelector('#jsTicketPrice').innerHTML =  pickedLottery.ticketPrice.toLocaleString() + ' $' + pickedLottery.symbol;
+                    document.querySelector('#jsTicketPriceInUSD').innerHTML =  '~ $' + (Number((pickedLottery.ticketPrice * pickedLottery.tokenPrice).toFixed(2))).toLocaleString();
+                    document.querySelector('#jsTotalPrice').innerHTML =  '0 $' + pickedLottery.symbol;
+                    document.querySelector('#jsTotalPriceInUSD').innerHTML =  '~ $0.00';
+                })
+            }
+
+            const jsTicketsNo = document.querySelector('#jsTicketsNo');
+
+            jsTicketsNo.addEventListener('input',()=>{
+                document.querySelector('#jsTotalPrice').innerHTML =  (jsTicketsNo.value * pickedLottery.ticketPrice).toLocaleString() + ' $' + pickedLottery.symbol;
+                document.querySelector('#jsTotalPriceInUSD').innerHTML =  '~ $' + (Number((jsTicketsNo.value * pickedLottery.ticketPrice * pickedLottery.tokenPrice).toFixed(2))).toLocaleString();
+            });
+
+            const jsMax = document.querySelector('#jsMax');
+            jsMax.addEventListener('click',()=>{
+                jsTicketsNo.value = '1650';
+                document.querySelector('#jsTotalPrice').innerHTML =  (jsTicketsNo.value * pickedLottery.ticketPrice).toLocaleString() + ' $' + pickedLottery.symbol;
+                document.querySelector('#jsTotalPriceInUSD').innerHTML =  '~ $' + (Number((jsTicketsNo.value * pickedLottery.ticketPrice * pickedLottery.tokenPrice).toFixed(2))).toLocaleString();
+            });
+
+            const jsBuyTicket = document.querySelector('#jsBuyTicket');
+
+            jsBuyTicket.addEventListener('click', () => {
+
+                document.querySelector('#dLottoHistoryTable').innerHTML = '<tr style="font-weight:600;"><td class="py-3">#10000</td><td class="py-3" style="white-space:nowrap">2024/05/03 06:45:09 PM UTC</td><td class="py-3">0xa300....0c83</td></tr><tr style="font-weight:600;"><td class="py-3">#9999</td><td class="py-3" style="white-space:nowrap">2024/04/03 06:45:09 PM UTC</td><td class="py-3">0xa300....0c83</td></tr><tr style="font-weight:600;"><td class="py-3">#9998</td><td class="py-3" style="white-space:nowrap">2024/04/03 06:45:09 PM UTC</td><td class="py-3">0xa300....0c83</td></tr><tr style="font-weight:600;"><td class="py-3">#9997</td><td class="py-3" style="white-space:nowrap">2024/04/03 06:45:09 PM UTC</td><td class="py-3">0xa300....0c83</td></tr><tr style="font-weight:600;"><td class="py-3">#9996</td><td class="py-3" style="white-space:nowrap">2024/04/03 06:45:09 PM UTC</td><td class="py-3">0xa300....0c83</td></tr><tr style="font-weight:600;"><td class="py-3">#9995</td><td class="py-3" style="white-space:nowrap">2024/04/03 06:45:09 PM UTC</td><td class="py-3">0xa300....0c83</td></tr><tr style="font-weight:600;"><td class="py-3">#9994</td><td class="py-3" style="white-space:nowrap">2024/04/03 06:45:09 PM UTC</td><td class="py-3">0xa300....0c83</td></tr><tr style="font-weight:600;"><td class="py-3">#9993</td><td class="py-3" style="white-space:nowrap">2024/04/03 06:45:09 PM UTC</td><td class="py-3">0xa300....0c83</td></tr><tr style="font-weight:600;"><td class="py-3">#9992</td><td class="py-3" style="white-space:nowrap">2024/04/03 06:45:09 PM UTC</td><td class="py-3">0xa300....0c83</td></tr><tr style="font-weight:600;"><td class="py-3">#9991</td><td class="py-3" style="white-space:nowrap">2024/04/03 06:45:09 PM UTC</td><td class="py-3">0xa300....0c83</td></tr>';
+
+                document.querySelector('#jsBuyTokensWrapper').classList.add('hide');
+                document.querySelector('#jsDrawsWrapper').classList.add('show');
+                pickedLottery.ticketSold = Number(pickedLottery.ticketSold) + Number(jsTicketsNo.value);
+                document.querySelector('#jsTicketsSold').innerHTML = pickedLottery.ticketSold.toLocaleString();
+                document.querySelector('#jsYourTickets').innerHTML = Number(jsTicketsNo.value).toLocaleString();
+                document.querySelector('#jsPrizePot').innerHTML = '$' + (Number((pickedLottery.ticketPrice * pickedLottery.ticketSold * pickedLottery.tokenPrice).toFixed(2))).toLocaleString()
+                document.querySelector('#jsPrizePotInTokens').innerHTML = (pickedLottery.ticketPrice * pickedLottery.ticketSold).toLocaleString() + ' $' + pickedLottery.symbol;
+                document.querySelector('#jsTicketSoldProgress').innerHTML = pickedLottery.ticketSold.toLocaleString();
+                document.querySelector('#jsProgressPercentage').innerHTML = (((pickedLottery.ticketSold / pickedLottery.ticketCap) * 100).toFixed(2)) + '%';
+                document.querySelector('#jsProgress').style.width = ((pickedLottery.ticketSold / pickedLottery.ticketCap) * 100).toFixed(2) + '%';
+
+                const countdownOneHour = new Date(new Date().getTime() + 1 * 60 * 60 * 1000);
+
+                setInterval(function() {
+
+// Get today's date and time
+var now = new Date().getTime();
+    
+// Find the distance between now and the count down date
+var distance = countdownOneHour - now;
+    
+// Time calculations for days, hours, minutes and seconds
+var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+if(days < 10){
+    days = '0' + days;
+}
+if(hours < 10){
+    hours = '0' + hours;
+}
+if(minutes < 10){
+    minutes = '0' + minutes;
+}
+if(seconds < 10){
+    seconds = '0' + seconds;
+}
+// Output the result in an element with id="demo"
+
+if(distance > 0){
+
+document.querySelector('#jsHours').innerHTML = hours;
+document.querySelector('#jsMinutes').innerHTML = minutes;
+document.querySelector('#jsSeconds').innerHTML = seconds;
+
+}
+
+
+
+if(distance < 0){
+
+    document.querySelector('#jsDrawsWrapper').classList.add('hide');
+    document.querySelector('#jsWinWrapper').classList.add('show');
+
+}
+
+}, 1);
+
+            });
+
+            const body = document.querySelector('body');
+
+
+        </script>
+        <script>
+            AOS.init();
+            AOS.init({
+                // Global settings:
+                disable: false, // accepts following values: 'phone', 'tablet', 'mobile', boolean, expression or function
+                startEvent: 'DOMContentLoaded', // name of the event dispatched on the document, that AOS should initialize on
+                initClassName: 'aos-init', // class applied after initialization
+                animatedClassName: 'aos-animate', // class applied on animation
+                useClassNames: false, // if true, will add content of `data-aos` as classes on scroll
+                disableMutationObserver: false, // disables automatic mutations' detections (advanced)
+                debounceDelay: 50, // the delay on debounce used while resizing window (advanced)
+                throttleDelay: 99, // the delay on throttle used while scrolling the page (advanced)
+                
+                // Settings that can be overridden on per-element basis, by `data-aos-*` attributes:
+                offset: 0, // offset (in px) from the original trigger point
+                delay: 0, // values from 0 to 3000, with step 50ms
+                duration: 1000, // values from 0 to 3000, with step 50ms
+                easing: 'ease', // default easing for AOS animations
+                once: false, // whether animation should happen only once - while scrolling down
+                mirror: false, // whether elements should animate out while scrolling past them
+                anchorPlacement: 'top-bottom', // defines which position of the element regarding to window should trigger the animation
+            });
+        </script>
+    </body>
+</html>
